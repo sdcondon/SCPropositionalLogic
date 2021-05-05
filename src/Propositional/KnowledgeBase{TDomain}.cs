@@ -25,7 +25,7 @@ namespace LinqToKB.Propositional
             // but this will suffice for getting started.
             // One approach worthy of investigation is to use a source generator to generate this at compile time (or
             // throw a compile error).
-            // Ultimately don't want to force the type to have settable props. How does Moq work - Reflection.Emit?
+            // Ultimately don't want to force the type to have settable props. How does Moq work - perhaps use Reflection.Emit?
             // (Or do all analysis with Linq expression visitors rather than actual invocation - though the side
             // benefits of using LINQ start to dissipate then - and suspect it would be a fair bit slower)
             symbols = GetSymbols();

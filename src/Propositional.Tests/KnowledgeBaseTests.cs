@@ -27,7 +27,7 @@ namespace LinqToKB.Propositional
             Assert.False(kb.Ask(m => m.ItIsSunny));
         }
 
-        public struct MyDomain
+        public class MyDomain
         {
             public bool TodayIsSaturday { get; set; }
             public bool ItIsTheWeekend { get; set; }

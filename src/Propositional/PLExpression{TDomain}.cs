@@ -10,7 +10,8 @@ namespace LinqToKB.Propositional
     public static class PLExpression<TDomain>
     {
         /// <summary>
-        /// Creates and returns an implication expression P ⇒ Q (or equivalently, ¬P ∨ Q). As such, exactly equivalent to (though hopefully easier to read than) a lambda similar to:
+        /// Creates and returns an implication expression P ⇒ Q (or equivalently, ¬P ∨ Q).
+        /// As such, exactly equivalent to (though hopefully easier to read than) a lambda similar to:
         /// <code>
         /// m => !m.P || m.Q
         /// </code>
@@ -21,14 +22,19 @@ namespace LinqToKB.Propositional
         /// <returns>An implication expression.</returns>
         public static Expression<Predicate<TDomain>> Implies(Expression<Predicate<TDomain>> p, Expression<Predicate<TDomain>> q)
         {
-            // We essentially want to !p.Bpdy || q.Body BUT with the parameter expressions in each replaced with a new singular one..
-            var newParameter = Expression.Parameter(typeof(TDomain));
-            var parameterReplacer = new ParameterReplacerVisitor(newParameter);
-            return Expression.Lambda<Predicate<TDomain>>(Expression.OrElse(Expression.IsFalse(parameterReplacer.Visit(p.Body)), parameterReplacer.Visit(q.Body)), newParameter);
+            // We essentially want !p.Body || q.Body BUT with the parameter expressions in each replaced with a new singular one.
+            // That's what ParameterReplacer does for us.
+            var pr = new ParameterReplacer();
+
+            return Expression.Lambda<Predicate<TDomain>>(
+                Expression.OrElse(
+                    Expression.IsFalse(pr.VisitLambdaBody(p)),
+                    pr.VisitLambdaBody(q)),
+                pr.NewParameter);
         }
 
         /// <summary>
-        /// Creates and returns an equivalence expression. That is, P ⇔ Q. Essentially just a shorthand for antecedent == consequent.
+        /// Creates and returns an equivalence expression. That is, P ⇔ Q.
         /// </summary>
         /// <typeparam name="TDomain"></typeparam>
         /// <param name="p"></param>
@@ -36,30 +42,38 @@ namespace LinqToKB.Propositional
         /// <returns>An equivalence expression.</returns>
         public static Expression<Predicate<TDomain>> Iff(Expression<Predicate<TDomain>> p, Expression<Predicate<TDomain>> q)
         {
-            // We essentially want to p.Bpdy == q.Body BUT with the parameter expressions in each replaced with a new singular one..
-            var newParameter = Expression.Parameter(typeof(TDomain));
-            var parameterReplacer = new ParameterReplacerVisitor(newParameter);
-            return Expression.Lambda<Predicate<TDomain>>(Expression.Equal(parameterReplacer.Visit(p.Body), parameterReplacer.Visit(q.Body)), newParameter);
+            // Note that we do this as (P ⇒ Q) ∧ (Q ⇒ P) rather than anything shorter (like P == Q) because it means that the expression is already
+            // in conjunctive normal form - to make it easier to apply resolution. See Artifical Intelligence: A Modern Approach or an equivalent
+            // learning resource for details.
+            // There's also probably a more direct way to write this instead doing parameter replacement three times - but going for readability rather
+            // than efficiency for the moment..
+            var pr = new ParameterReplacer();
+
+            var clause1 = Implies(p, q);
+            var clause2 = Implies(q, p);
+            return Expression.Lambda<Predicate<TDomain>>(Expression.AndAlso(pr.VisitLambdaBody(clause1), pr.VisitLambdaBody(clause2)), pr.NewParameter);
         }
 
-        private class ParameterReplacerVisitor : ExpressionVisitor
+        /// <summary>
+        /// Expression visitor that replaces all parameter references (of the TDomain type) with a singular one of its own.
+        /// </summary>
+        private class ParameterReplacer : ExpressionVisitor
         {
-            private readonly ParameterExpression newParameter;
+            public ParameterReplacer() => NewParameter = Expression.Parameter(typeof(TDomain));
 
-            public ParameterReplacerVisitor(ParameterExpression newParameter)
-            {
-                this.newParameter = newParameter;
-            }
+            public ParameterExpression NewParameter { get; private set; }
 
             public override Expression Visit(Expression node)
             {
-                if (node is ParameterExpression parameterExpression && parameterExpression.Type == newParameter.Type)
+                if (node is ParameterExpression parameterExpression && parameterExpression.Type == NewParameter.Type)
                 {
-                    return newParameter;
+                    return NewParameter;
                 }
 
                 return base.Visit(node);
             }
+
+            public Expression VisitLambdaBody(Expression<Predicate<TDomain>> lambda) => Visit(lambda.Body);
         }
     }
 }
