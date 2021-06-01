@@ -16,7 +16,8 @@ using static LinqToKB.Propositional.PLExpression<MyModel>; // For Implies
 ..
 
 // For the mo, can only work with gettable & settable public bool-valued properties
-// on classes with a parameterless public constructor.
+// on classes with a parameterless public constructor. Want to target interfaces, 
+// ultimately.
 class MyModel
 {
     public bool TodayIsSaturday { get; set; }
