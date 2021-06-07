@@ -2,16 +2,16 @@
 
 namespace LinqToKB.Propositional.Internals
 {
-    public class ConjunctiveNormalFormTests
+    public class CNFConverterTests
     {
         [Fact]
         public void Smoke()
         {
             var original = PLExpression<MyModel>.Iff(m => m.L, m => m.R1 || m.R2);
-            var converted = new ConjunctiveNormalFormConverter().VisitAndConvert(original, null);
+            var converted = new CNFConverter().VisitAndConvert(original.Body, null);
             Assert.Equal(
-                "((IsFalse(Param_0.L) OrElse (Param_0.R1 OrElse Param_0.R2)) AndAlso ((IsFalse(Param_0.R1) OrElse Param_0.L) AndAlso (IsFalse(Param_0.R2) OrElse Param_0.L)))",
-                converted.Body.ToString());
+                "((IsFalse(m.L) OrElse (m.R1 OrElse m.R2)) AndAlso ((IsFalse(m.R1) OrElse m.L) AndAlso (IsFalse(m.R2) OrElse m.L)))",
+                converted.ToString());
         }
 
         private class MyModel

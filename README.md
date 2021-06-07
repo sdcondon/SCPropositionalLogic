@@ -4,6 +4,16 @@ Knowledge base & inference libraries that use LINQ expressions for both knowledg
 This was created just for fun while reading _Artificial Intelligence: A Modern Approach_ (3rd Edition - ISBN 978-1292153964) - so may prove interesting to the .NET-inclined reading the same book. 
 For real-world scenarios, there are other better inference engines out there - that generally use more powerful logics than propositional logic, which is all that's implemented thus far (and maybe ever, but we'll see..).
 
+Benefits of using LINQ expressions:
+- Your logic can be expressed in the familiar, plain-old C#
+- Your rules are expressed in code that can be executed directly against the domain model (which is probably useful.. somehow)
+- LINQ already includes much of the plumbing to make this happen - expression trees, visitor classes etc - meaning that there isn't actually a huge amount that the library needs to add.
+
+TODO: ..and any potential drawbacks?
+
+Limitations:
+- (TODO talk about atopping short of fully-fledged learning. Because the value of language-integrated knowledge is massively diminished when that knowledge isn't established by the code..)
+
 ## LinqToKB.Propositional
 
 A very simple [propositional logic](https://en.wikipedia.org/wiki/Propositional_calculus) knowledge base and inference engine that uses LINQ expressions for knowledge representation and queries.

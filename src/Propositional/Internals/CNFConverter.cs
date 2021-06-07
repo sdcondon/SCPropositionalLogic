@@ -5,7 +5,7 @@ namespace LinqToKB.Propositional.Internals
     /// <summary>
     /// Linq expression visitor that converts the visited expression to conjunctive normal form.
     /// </summary>
-    public class ConjunctiveNormalFormConverter : ExpressionVisitor
+    public class CNFConverter : ExpressionVisitor
     {
         private readonly NegationNormalFormConverter negationNormalFormConverter = new NegationNormalFormConverter();
         private readonly OrDistributor orDistributor = new OrDistributor();
@@ -28,8 +28,8 @@ namespace LinqToKB.Propositional.Internals
             /// <inheritdoc />
             public override Expression Visit(Expression node)
             {
-                // throw for anything that can't be used? whitelist is AndAlso, OrElse, IsFalse, Parameter access (of a bool - but that implied by other limitations)?
-                // Or just stop and return node as soon as we hit anything non-boolean-valued?
+                // TODO: throw for anything that can't be used? whitelist is AndAlso, OrElse, IsFalse, Parameter access (of a bool - but that implied by other limitations)?
+                // Or (better): just stop and return node as soon as we hit anything with non-boolean-valued children (i.e. treat it as an atomic sentence)?
 
                 if (node is UnaryExpression u && u.NodeType == ExpressionType.IsFalse)
                 {
@@ -54,7 +54,6 @@ namespace LinqToKB.Propositional.Internals
             }
         }
 
-
         /// <summary>
         /// Expression visitor that recursively distributes disjunctions over conjunctions.
         /// </summary>
@@ -72,7 +71,7 @@ namespace LinqToKB.Propositional.Internals
                             Expression.OrElse(b.Left, andAlsoRight.Left),
                             Expression.OrElse(b.Left, andAlsoRight.Right));
                     }
-                    else if (b.Left is BinaryExpression andAlsoLeft && andAlsoLeft.NodeType == ExpressionType.AndAlso) // hmm. else. suspect can find some failing TCs, here..
+                    else if (b.Left is BinaryExpression andAlsoLeft && andAlsoLeft.NodeType == ExpressionType.AndAlso) // hmm. else. suspect can find some failing test cases, here..
                     {
                         // Apply distribution of ∨ over ∧: (α ∨ (β ∧ γ)) ≡ ((α ∧ β) ∨ (α ∧ γ))
                         node = Expression.AndAlso(

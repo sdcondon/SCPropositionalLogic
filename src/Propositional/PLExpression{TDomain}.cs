@@ -10,10 +10,10 @@ namespace LinqToKB.Propositional
     public static class PLExpression<TDomain>
     {
         /// <summary>
-        /// Creates and returns an implication expression P ⇒ Q (or equivalently, ¬P ∨ Q).
-        /// As such, exactly equivalent to (though hopefully easier to read than) a lambda similar to:
+        /// Creates and returns an implication expression P ⇒ Q.
+        /// As per the definition of implication, <code>Implies(model => model.P, model => model.Q)</code> is exactly equivalent to (though hopefully easier to read than)
         /// <code>
-        /// m => !m.P || m.Q
+        /// model => !model.P || model.Q
         /// </code>
         /// </summary>
         /// <typeparam name="TDomain">The model type.</typeparam>
@@ -24,7 +24,7 @@ namespace LinqToKB.Propositional
         {
             // We essentially want !p.Body || q.Body BUT with the parameter expressions in each replaced with a new singular one.
             // That's what ParameterReplacer does for us.
-            var pr = new ParameterReplacer();
+            var pr = new ParameterReplacer(p.Parameters[0].Name);
 
             return Expression.Lambda<Predicate<TDomain>>(
                 Expression.OrElse(
@@ -47,7 +47,7 @@ namespace LinqToKB.Propositional
             // learning resource for details.
             // There's also probably a more direct way to write this instead doing parameter replacement three times - but going for readability rather
             // than efficiency for the moment..
-            var pr = new ParameterReplacer();
+            var pr = new ParameterReplacer(p.Parameters[0].Name);
 
             var clause1 = Implies(p, q);
             var clause2 = Implies(q, p);
@@ -59,7 +59,7 @@ namespace LinqToKB.Propositional
         /// </summary>
         private class ParameterReplacer : ExpressionVisitor
         {
-            public ParameterReplacer() => NewParameter = Expression.Parameter(typeof(TDomain));
+            public ParameterReplacer(string name) => NewParameter = Expression.Parameter(typeof(TDomain), name);
 
             public ParameterExpression NewParameter { get; private set; }
 
