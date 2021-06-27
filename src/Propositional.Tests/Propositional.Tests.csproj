@@ -5,9 +5,9 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>LinqToKB.Propositional</RootNamespace>
+    <RootNamespace>LinqToKnowledgeBase.Propositional</RootNamespace>
 
-    <AssemblyName>LinqToKB.Propositional.Tests</AssemblyName>
+    <AssemblyName>LinqToKnowledgeBase.Propositional.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

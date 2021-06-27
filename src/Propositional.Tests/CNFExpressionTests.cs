@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Xunit;
 
-namespace LinqToKB.Propositional.Internals
+namespace LinqToKnowledgeBase.Propositional
 {
     public class CNFExpressionTests
     {
@@ -111,7 +111,7 @@ namespace LinqToKB.Propositional.Internals
             string atomicSentenceSymbol,
             bool isNegated)
         {
-            Assert.Equal(atomicSentenceSymbol, literal.AtomicSentenceSymbol);
+            Assert.Equal(atomicSentenceSymbol, literal.AtomicSentence.Symbol);
             Assert.Equal(isNegated, literal.IsNegated);
         }
     }

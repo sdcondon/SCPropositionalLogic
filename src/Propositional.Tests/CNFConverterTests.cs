@@ -1,11 +1,21 @@
 ﻿using Xunit;
 
-namespace LinqToKB.Propositional.Internals
+namespace LinqToKnowledgeBase.Propositional
 {
     public class CNFConverterTests
     {
         [Fact]
-        public void Smoke()
+        public void Lambda()
+        {
+            var original = PLExpression<MyModel>.Iff(m => m.L, m => m.R1 || m.R2);
+            var converted = new CNFConverter().VisitAndConvert(original, null);
+            Assert.Equal(
+                "m => ((IsFalse(m.L) OrElse (m.R1 OrElse m.R2)) AndAlso ((IsFalse(m.R1) OrElse m.L) AndAlso (IsFalse(m.R2) OrElse m.L)))",
+                converted.ToString());
+        }
+
+        [Fact]
+        public void LambdaBody()
         {
             var original = PLExpression<MyModel>.Iff(m => m.L, m => m.R1 || m.R2);
             var converted = new CNFConverter().VisitAndConvert(original.Body, null);

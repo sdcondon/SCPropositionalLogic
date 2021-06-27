@@ -1,34 +1,34 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using LinqToKB.Propositional.InferenceStrategies;
-using static LinqToKB.Propositional.PLExpression<LinqToKB.Propositional.Benchmarks.InferenceStrategyBenchmarks.MyModel>;
+using LinqToKnowledgeBase.Propositional.KnowledgeBases;
+using System.Reflection;
+using static LinqToKnowledgeBase.Propositional.PLExpression<LinqToKnowledgeBase.Propositional.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
 
-namespace LinqToKB.Propositional.Benchmarks
+namespace LinqToKnowledgeBase.Propositional.Benchmarks
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class InferenceStrategyBenchmarks
+    public class KnowledgeBaseBenchmarks
     {
         /// <summary>
         /// Application entry point.
         /// </summary>
-        public static void Main()
+        public static void Main(string[] args)
         {
-            BenchmarkRunner.Run<InferenceStrategyBenchmarks>();
+            // See https://benchmarkdotnet.org/articles/guides/console-args.html (or run app with --help)
+            BenchmarkSwitcher.FromAssembly(Assembly.GetExecutingAssembly()).Run(args);
         }
 
         [Benchmark]
         public bool TruthTable()
         {
-            var kb = MakeKnowledgeBase();
-
-            kb.InferenceStrategy = new TruthTableInferenceStrategy<MyModel>();
+            var kb = MakeTTKnowledgeBase();
             return kb.Ask(m => m.Fact10);
         }
 
-        private static KnowledgeBase<MyModel> MakeKnowledgeBase()
+        private static TruthTableKnowledgeBase<MyModel> MakeTTKnowledgeBase()
         {
-            var kb = new KnowledgeBase<MyModel>();
+            var kb = new TruthTableKnowledgeBase<MyModel>();
             kb.Tell(Implies(m => m.Fact1, m => m.Fact2));
             kb.Tell(Implies(m => m.Fact2, m => m.Fact3));
             kb.Tell(Implies(m => m.Fact3, m => m.Fact4));

@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>LinqToKB.Propositional.Benchmarks</AssemblyName>
-    <RootNamespace>LinqToKB.Propositional.Benchmarks</RootNamespace>
+    <AssemblyName>LinqToKnowledgeBase.Propositional.Benchmarks</AssemblyName>
+    <RootNamespace>LinqToKnowledgeBase.Propositional.Benchmarks</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
