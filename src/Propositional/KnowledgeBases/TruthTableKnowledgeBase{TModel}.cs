@@ -4,14 +4,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LinqToKnowledgeBase.Propositional.KnowledgeBases
+namespace LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases
 {
     /// <summary>
     /// Knowledge base that satisfies queries by enumerating all possible models, returning true if and only if the query holds
     /// true in all models in which all of the rules hold true. Obviously incredibly slow for non-trivial models - 
     /// intended only for demonstration purposes.
     /// </summary>
-    /// <typeparam name="TModel">The type that the literals of the rules and queries refer to.</typeparam>
+    /// <typeparam name="TModel">
+    /// The type that the literals of the rules and queries refer to. NB: Must contain only boolean-valued properties, since that is all the KB can handle.
+    /// An exception will be thrown during type initialization otherwise.
+    /// </typeparam>
     public class TruthTableKnowledgeBase<TModel> : IKnowledgeBase<TModel>
         where TModel : class, new()
     {

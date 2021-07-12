@@ -1,9 +1,10 @@
-﻿using System;
+﻿using LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases
+namespace LinqToKnowledgeBase.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
 {
     /// <summary>
     /// Knowledge base that uses resolution to answer queries.
@@ -57,41 +58,34 @@ namespace LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases
             var negationOfQuery = Expression.Lambda<Predicate<TModel>>(Expression.Not(query.Body), query.Parameters);
             var negationOfQueryAsCnf = new CNFExpression<TModel>(negationOfQuery);
             var clauses = sentences.Append(negationOfQueryAsCnf).SelectMany(s => s.Clauses).ToHashSet();
-            var queue = new Queue<(CNFClause<TModel>, CNFClause<TModel>)>();
+            HashSet<CNFClause<TModel>> newClauses = new HashSet<CNFClause<TModel>>();
 
-            foreach (var ci in clauses)
+            while (true)
             {
-                foreach (var cj in clauses)
+                // TODO-PERFORMANCE: While this is how the source book writes the algorithm, its rather inefficient -
+                // we'll end up resolving the same clauses again and again. Need to improve this (and move this 
+                // implementation to the benchmarks project as a baseline). Perhaps a queue?
+                foreach (var ci in clauses)
                 {
-                    queue.Enqueue((ci, cj));
-                }
-            }
-
-            while (queue.Count > 0)
-            {
-                var (ci, cj) = queue.Dequeue();
-                var resolvents = CNFClause<TModel>.Resolve(ci, cj);
-
-                foreach (var resolvent in resolvents)
-                {
-                    if (resolvent.Equals(CNFClause<TModel>.Empty))
+                    foreach (var cj in clauses)
                     {
-                        return true;
-                    }
-
-                    if (!clauses.Contains(resolvent))
-                    {
-                        foreach (var clause in clauses)
+                        var resolvents = CNFClause<TModel>.Resolve(ci, cj);
+                        if (resolvents.Contains(CNFClause<TModel>.Empty))
                         {
-                            queue.Enqueue((clause, resolvent));
+                            return true;
                         }
 
-                        clauses.Add(resolvent);
+                        newClauses.UnionWith(resolvents);
                     }
                 }
-            }
 
-            return false;
+                if (newClauses.IsSubsetOf(clauses))
+                {
+                    return false;
+                }
+
+                clauses.UnionWith(newClauses);
+            }
         }
     }
 }

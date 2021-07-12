@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.Propositional
+namespace LinqToKnowledgeBase.PropositionalLogic
 {
     /// <summary>
-    /// Representation of a propositional logic literal. That is, an atomic sentence or a negated atomic sentence.
+    /// Representation of a literal of propositional logic. That is, an atomic sentence or a negated atomic sentence.
     /// </summary>
     /// <typeparam name="TModel">The type of model that this literal refers to.</typeparam>
     public class PLLiteral<TModel>
@@ -22,9 +22,34 @@ namespace LinqToKnowledgeBase.Propositional
         /// </remarks>
         internal PLLiteral(Expression<Predicate<TModel>> lambda)
         {
-            // TODO-ROBUSTNESS: Debug-only verification that it is actually literal?
+            // TODO-ROBUSTNESS: Debug-only verification that it is actually a literal?
             Lambda = lambda; // Assumed to be a literal
-            new LiteralExaminer(this).Visit(lambda.Body);
+            new LiteralConstructor(this).Visit(lambda.Body);
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="PLLiteral{TModel}"/> class.
+        /// </summary>
+        /// <param name="atomicSentence">The atomic sentence to which this literal refers.</param>
+        /// <param name="isNegated">A value indicating whether the atomic sentence is negated.</param>
+        /// <remarks>
+        /// While there is nothing stopping this being public from a robustness perspective, there is as yet
+        /// no easy way for consumers to instantiate an atomic sentence on its own - making it pointless for the
+        /// moment.
+        /// </remarks>
+        internal PLLiteral(PLAtomicSentence<TModel> atomicSentence, bool isNegated)
+        {
+            this.atomicSentence = atomicSentence;
+            this.isNegated = isNegated;
+
+            if (isNegated)
+            {
+                Lambda = Expression.Lambda<Predicate<TModel>>(Expression.Not(atomicSentence.Lambda.Body), atomicSentence.Lambda.Parameters);
+            }
+            else
+            {
+                Lambda = atomicSentence.Lambda;
+            }
         }
 
         /// <summary>
@@ -38,9 +63,23 @@ namespace LinqToKnowledgeBase.Propositional
         public bool IsNegated => isNegated;
 
         /// <summary>
+        /// Gets a value indicating whether this literal is not a negation of the underlying atomic sentence.
+        /// </summary>
+        public bool IsPositive => !isNegated;
+
+        /// <summary>
         /// Gets the underlying atomic sentence of this literal.
         /// </summary>
         public PLAtomicSentence<TModel> AtomicSentence => atomicSentence;
+
+        /// <summary>
+        ///Constructs and returns a literal that is the negation of this one.
+        /// </summary>
+        /// <returns>A literal that is the negation of this one.</returns>
+        public PLLiteral<TModel> Negate() => new PLLiteral<TModel>(AtomicSentence, !IsNegated);
+
+        /// <inheritdoc />
+        public override string ToString() => $"{(IsNegated ? "¬" : string.Empty)}{AtomicSentence}";
 
         /// <inheritdoc />
         public override bool Equals(object obj)
@@ -54,15 +93,15 @@ namespace LinqToKnowledgeBase.Propositional
             return HashCode.Combine(atomicSentence, isNegated);
         }
 
-        private class LiteralExaminer: ExpressionVisitor
+        private class LiteralConstructor : ExpressionVisitor
         {
             private readonly PLLiteral<TModel> owner;
 
-            public LiteralExaminer(PLLiteral<TModel> owner) => this.owner = owner;
+            public LiteralConstructor(PLLiteral<TModel> owner) => this.owner = owner;
 
             public override Expression Visit(Expression node)
             {
-                if (node is UnaryExpression not && not.NodeType == ExpressionType.IsFalse)
+                if (node is UnaryExpression not && not.NodeType == ExpressionType.Not)
                 {
                     // Since we have assumed that the provided lambda is a literal,
                     // we know that a Not expression (if there is one) will be at the root..

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.Propositional
+namespace LinqToKnowledgeBase.PropositionalLogic
 {
     /// <summary>
     /// Linq expression visitor that converts the visited expression to conjunctive normal form.
@@ -40,25 +40,26 @@ namespace LinqToKnowledgeBase.Propositional
             /// <inheritdoc />
             public override Expression Visit(Expression node)
             {
-                // TODO-ROBUSTNESS: throw for anything that can't be used? whitelist is AndAlso, OrElse, IsFalse, Parameter access (of a bool - but that implied by other limitations)?
+                // TODO-ROBUSTNESS: throw for anything that can't be used? whitelist is AndAlso, OrElse, Not, Parameter access (of a bool - but that implied by other limitations)?
                 // Or (better): just stop and return node as soon as we hit anything with non-boolean-valued children (i.e. treat it as an atomic sentence)?
+                // TODO-MAINTAINABILITY: this feels like a more fundamental bit of logic than specific to CNF? Considering a redesign where PLExpression<> is instantiable..
 
-                if (node is UnaryExpression u && u.NodeType == ExpressionType.IsFalse)
+                if (node is UnaryExpression u && u.NodeType == ExpressionType.Not)
                 {
-                    if (u.Operand is UnaryExpression isFalse && isFalse.NodeType == ExpressionType.IsFalse)
+                    if (u.Operand is UnaryExpression not && not.NodeType == ExpressionType.Not)
                     {
                         // Eliminate double negative: ¬(¬P) ≡ P
-                        node = isFalse.Operand;
+                        node = not.Operand;
                     }
                     else if (u.Operand is BinaryExpression andAlso && andAlso.NodeType == ExpressionType.AndAlso)
                     {
                         // Apply de Morgan: ¬(P ∧ Q) ≡ (¬P ∨ ¬Q)
-                        node = Expression.OrElse(Expression.IsFalse(andAlso.Left), Expression.IsFalse(andAlso.Right));
+                        node = Expression.OrElse(Expression.Not(andAlso.Left), Expression.Not(andAlso.Right));
                     }
                     else if (u.Operand is BinaryExpression orElse && orElse.NodeType == ExpressionType.OrElse)
                     {
                         // Apply de Morgan: ¬(P ∨ Q) ≡ (¬P ∧ ¬Q)
-                        node = Expression.AndAlso(Expression.IsFalse(orElse.Left), Expression.IsFalse(orElse.Right));
+                        node = Expression.AndAlso(Expression.Not(orElse.Left), Expression.Not(orElse.Right));
                     }
                 }
 
@@ -78,14 +79,14 @@ namespace LinqToKnowledgeBase.Propositional
                 {
                     if (b.Right is BinaryExpression andAlsoRight && andAlsoRight.NodeType == ExpressionType.AndAlso)
                     {
-                        // Apply distribution of ∨ over ∧: (α ∨ (β ∧ γ)) ≡ ((α ∧ β) ∨ (α ∧ γ))
+                        // Apply distribution of ∨ over ∧: (α ∨ (β ∧ γ)) ≡ ((α ∨ β) ∧ (α ∨ γ))
                         node = Expression.AndAlso(
                             Expression.OrElse(b.Left, andAlsoRight.Left),
                             Expression.OrElse(b.Left, andAlsoRight.Right));
                     }
                     else if (b.Left is BinaryExpression andAlsoLeft && andAlsoLeft.NodeType == ExpressionType.AndAlso) // TODO: hmm. else. need to revisit this to verify no bugs..
                     {
-                        // Apply distribution of ∨ over ∧: ((β ∧ γ) ∨ α) ≡ ((β ∧ α) ∨ (γ ∧ α))
+                        // Apply distribution of ∨ over ∧: ((β ∧ γ) ∨ α) ≡ ((β ∨ α) ∧ (γ ∨ α))
                         node = Expression.AndAlso(
                             Expression.OrElse(andAlsoLeft.Left, b.Right),
                             Expression.OrElse(andAlsoLeft.Right, b.Right));

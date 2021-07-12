@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("LinqToKnowledgeBase.Propositional.Tests")]
+[assembly: InternalsVisibleTo("LinqToKnowledgeBase.PropositionalLogic.Tests")]

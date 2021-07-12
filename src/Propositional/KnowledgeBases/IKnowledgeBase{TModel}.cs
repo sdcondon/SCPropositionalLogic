@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.Propositional.KnowledgeBases
+namespace LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases
 {
     /// <summary>
     /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions).
     /// </summary>
     /// <typeparam name="TModel">
-    /// The type that the sentences passed to this class refer to. NB: Must contain only boolean-valued properties, since that is all the KB can handle.
-    /// An exception will be thrown during type initialization otherwise.
+    /// The type that the sentences passed to this class refer to.
     /// </typeparam>
     public interface IKnowledgeBase<TModel>
     {

@@ -2,7 +2,7 @@
 ////using System.Linq.Expressions;
 using Xunit;
 
-namespace LinqToKnowledgeBase.Propositional
+namespace LinqToKnowledgeBase.PropositionalLogic
 {
     public class PLExpressionTests
     {

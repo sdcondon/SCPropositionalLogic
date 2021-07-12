@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.Propositional
+namespace LinqToKnowledgeBase.PropositionalLogic
 {
+    /// <summary>
+    /// Representation of an atomic sentence of propositional logic.
+    /// </summary>
+    /// <typeparam name="TModel">The type of model that this atomic sentence refers to.</typeparam>
     public class PLAtomicSentence<TModel>
     {
         private object equalitySurrogate;
+        private string symbol;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PLAtomicSentence{TModel}"/> class.
@@ -19,7 +24,7 @@ namespace LinqToKnowledgeBase.Propositional
         {
             // TODO-ROBUSTNESS: Debug-only verification that it is actually an atomic sentence?
             Lambda = lambda; // Assumed to be an atomic sentence
-            new AtomicSentenceExaminer(this).Visit(lambda.Body);
+            new AtomicSentenceConstructor(this).Visit(lambda.Body);
         }
 
         /// <summary>
@@ -30,7 +35,15 @@ namespace LinqToKnowledgeBase.Propositional
         /// <summary>
         /// Gets a string representation of this atomic sentence.
         /// </summary>
-        public string Symbol => Lambda.Body.ToString();
+        public string Symbol => symbol;
+
+        //// TODO-FEATURE: Introducing some public methods to create atomic sentences directly
+        //// would in turn facilitate being able to some of the internal ctors for PLLiteral et
+        //// al public too, increasing the functionality of the library.
+        //// Static factory methods (e.g. Property(PropertyInfo)), perhaps?
+
+        /// <inheritdoc />
+        public override string ToString() => symbol;
 
         /// <inheritdoc />
         public override bool Equals(object obj)
@@ -44,20 +57,23 @@ namespace LinqToKnowledgeBase.Propositional
             return equalitySurrogate.GetHashCode();
         }
 
-        // TODO: no need for an expression visitor unless we end up making the ctor public and verifying that it is actually an atomic sentence,
+        // TODO-MAINTAINABILITY: no need for an expression visitor unless we end up making the ctor public and verifying that it is actually an atomic sentence,
         // because all we do at the mo is stop at the root node..
-        private class AtomicSentenceExaminer : ExpressionVisitor
+        private class AtomicSentenceConstructor : ExpressionVisitor
         {
             private readonly PLAtomicSentence<TModel> owner;
 
-            public AtomicSentenceExaminer(PLAtomicSentence<TModel> owner) => this.owner = owner;
+            public AtomicSentenceConstructor(PLAtomicSentence<TModel> owner) => this.owner = owner;
 
             public override Expression Visit(Expression node)
             {
-                owner.equalitySurrogate = node switch
+                (owner.equalitySurrogate, owner.symbol) = node switch
                 {
-                    MemberExpression memberExpr => memberExpr.Member,
-                    _ => throw new NotSupportedException(),
+                    // TODO-ROBUSTNESS: Need more here - ideally, it should be exhaustive.. Really need
+                    // comprehensively defined strategy for exactly how lambdas are interpreted as PL sentences.
+                    // TODO-PERFORMANCE: MetadataToken is an int - so boxing. Can we specify the surrogate as an int? Depends on other expr types..
+                    MemberExpression memberExpr => (memberExpr.Member.MetadataToken, memberExpr.Member.Name),
+                    _ => throw new NotSupportedException($"Node type {node.GetType()} ({node.NodeType}) not supported"),
                 };
 
                 return node; // no need to explore further, so not base.Visit

@@ -1,14 +1,15 @@
-﻿using System.Linq;
+﻿using FluentAssertions;
+using System.Linq;
 using Xunit;
 
-namespace LinqToKnowledgeBase.Propositional
+namespace LinqToKnowledgeBase.PropositionalLogic
 {
     public class CNFExpressionTests
     {
         [Fact]
-        public void UnitClause()
+        public void ConstructionOfUnitClause()
         {
-            var e = new CNFExpression<MyModel>(m => m.L);
+            var e = new CNFExpression<MyModel>(m => m.P);
 
             e.ShouldHaveState(clauseCount: 1);
 
@@ -20,14 +21,33 @@ namespace LinqToKnowledgeBase.Propositional
                 literalCount: 1);
 
             e.Clauses.Single().Literals.Single().ShouldHaveState(
-                atomicSentenceSymbol: "m.L",
+                atomicSentenceSymbol: "P",
                 isNegated: false);
         }
 
         [Fact]
-        public void NeedsNormalisation()
+        public void ConstructionOfNegatedUnitClause()
         {
-            var e = new CNFExpression<MyModel>(PLExpression<MyModel>.Iff(m => m.L, m => m.R1 || m.R2));
+            var e = new CNFExpression<MyModel>(m => !m.P);
+
+            e.ShouldHaveState(clauseCount: 1);
+
+            e.Clauses.Single().ShouldHaveState(
+                isDefiniteClause: false,
+                isGoalClause: true,
+                isHornClause: true,
+                isUnitClause: true,
+                literalCount: 1);
+
+            e.Clauses.Single().Literals.Single().ShouldHaveState(
+                atomicSentenceSymbol: "P",
+                isNegated: true);
+        }
+
+        [Fact]
+        public void ConstructionOfNonNormalExpression()
+        {
+            var e = new CNFExpression<MyModel>(PLExpression<MyModel>.Iff(m => m.P, m => !(!m.Q && !m.R)));
 
             e.ShouldHaveState(clauseCount: 3);
 
@@ -38,13 +58,13 @@ namespace LinqToKnowledgeBase.Propositional
                 isUnitClause: false,
                 literalCount: 3);
             e.Clauses.ElementAt(0).Literals.ElementAt(0).ShouldHaveState(
-                atomicSentenceSymbol: "m.L",
+                atomicSentenceSymbol: "P",
                 isNegated: true);
             e.Clauses.ElementAt(0).Literals.ElementAt(1).ShouldHaveState(
-                atomicSentenceSymbol: "m.R1",
+                atomicSentenceSymbol: "Q",
                 isNegated: false);
             e.Clauses.ElementAt(0).Literals.ElementAt(2).ShouldHaveState(
-                atomicSentenceSymbol: "m.R2",
+                atomicSentenceSymbol: "R",
                 isNegated: false);
 
             e.Clauses.ElementAt(1).ShouldHaveState(
@@ -54,11 +74,11 @@ namespace LinqToKnowledgeBase.Propositional
                 isUnitClause: false,
                 literalCount: 2);
             e.Clauses.ElementAt(1).Literals.ElementAt(0).ShouldHaveState(
-                atomicSentenceSymbol: "m.R1",
-                isNegated: true);
-            e.Clauses.ElementAt(1).Literals.ElementAt(1).ShouldHaveState(
-                atomicSentenceSymbol: "m.L",
+                atomicSentenceSymbol: "P",
                 isNegated: false);
+            e.Clauses.ElementAt(1).Literals.ElementAt(1).ShouldHaveState(
+                atomicSentenceSymbol: "Q",
+                isNegated: true);
 
             e.Clauses.ElementAt(2).ShouldHaveState(
                 isDefiniteClause: true,
@@ -67,19 +87,68 @@ namespace LinqToKnowledgeBase.Propositional
                 isUnitClause: false,
                 literalCount: 2);
             e.Clauses.ElementAt(2).Literals.ElementAt(0).ShouldHaveState(
-                atomicSentenceSymbol: "m.R2",
-                isNegated: true);
-            e.Clauses.ElementAt(2).Literals.ElementAt(1).ShouldHaveState(
-                atomicSentenceSymbol: "m.L",
+                atomicSentenceSymbol: "P",
                 isNegated: false);
+            e.Clauses.ElementAt(2).Literals.ElementAt(1).ShouldHaveState(
+                atomicSentenceSymbol: "R",
+                isNegated: true);
+        }
+
+        [Fact]
+        public void ResolutionOfResolvableClauses()
+        {
+            var resolvents = CNFClause<MyModel>.Resolve(
+                new CNFExpression<MyModel>(m => !m.P || m.Q).Clauses.Single(),
+                new CNFExpression<MyModel>(m => m.P).Clauses.Single());
+            Assert.Single(resolvents, new CNFExpression<MyModel>(m => m.Q).Clauses.Single());
+        }
+
+        [Fact]
+        public void ResolutionOfResolvableClauses2()
+        {
+            var resolvents = CNFClause<MyModel>.Resolve(
+                new CNFExpression<MyModel>(m => !m.P || m.Q).Clauses.Single(),
+                new CNFExpression<MyModel>(m => m.P || m.R).Clauses.Single());
+            Assert.Single(resolvents, new CNFExpression<MyModel>(m => m.Q || m.R).Clauses.Single());
+        }
+
+        [Fact]
+        public void ResolutionOfUnresolvableClauses()
+        {
+            var resolvents = CNFClause<MyModel>.Resolve(
+                new CNFExpression<MyModel>(m => m.P).Clauses.Single(),
+                new CNFExpression<MyModel>(m => m.Q).Clauses.Single());
+            Assert.Empty(resolvents);
+        }
+
+        [Fact]
+        public void ResolutionOfComplementaryUnitClauses()
+        {
+            var resolvents = CNFClause<MyModel>.Resolve(
+                new CNFExpression<MyModel>(m => m.P).Clauses.Single(),
+                new CNFExpression<MyModel>(m => !m.P).Clauses.Single());
+            Assert.Single(resolvents, CNFClause<MyModel>.Empty);
+        }
+
+        [Fact]
+        public void ResolutionOfMultiplyResolvableClauses()
+        {
+            var resolvents = CNFClause<MyModel>.Resolve(
+                new CNFExpression<MyModel>(m => m.P || m.Q).Clauses.Single(),
+                new CNFExpression<MyModel>(m => !m.P || !m.Q).Clauses.Single());
+            resolvents.Should().BeEquivalentTo(new[]
+            {
+                new CNFExpression<MyModel>(m => m.P || !m.P).Clauses.Single(),
+                new CNFExpression<MyModel>(m => m.Q || !m.Q).Clauses.Single()
+            });
         }
     }
 
     internal class MyModel
     {
-        public bool L { get; set; }
-        public bool R1 { get; set; }
-        public bool R2 { get; set; }
+        public bool P { get; set; }
+        public bool Q { get; set; }
+        public bool R { get; set; }
     }
 
     internal static class CNFAssertionExtensions

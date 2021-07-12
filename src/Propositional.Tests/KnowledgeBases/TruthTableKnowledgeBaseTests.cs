@@ -1,7 +1,7 @@
 using Xunit;
-using static LinqToKnowledgeBase.Propositional.PLExpression<LinqToKnowledgeBase.Propositional.KnowledgeBases.TruthTableKnowledgeBaseTests.Model>;
+using static LinqToKnowledgeBase.PropositionalLogic.PLExpression<LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases.TruthTableKnowledgeBaseTests.Model>;
 
-namespace LinqToKnowledgeBase.Propositional.KnowledgeBases
+namespace LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases
 {
     public class TruthTableKnowledgeBaseTests
     {

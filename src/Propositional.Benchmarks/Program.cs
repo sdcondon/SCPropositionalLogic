@@ -1,10 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using LinqToKnowledgeBase.Propositional.KnowledgeBases;
+using LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases;
 using System.Reflection;
-using static LinqToKnowledgeBase.Propositional.PLExpression<LinqToKnowledgeBase.Propositional.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
+using static LinqToKnowledgeBase.PropositionalLogic.PLExpression<LinqToKnowledgeBase.PropositionalLogic.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
+using AiAModernApproachResolutionKB = LinqToKnowledgeBase.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach.ResolutionKnowledgeBase<LinqToKnowledgeBase.PropositionalLogic.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
 
-namespace LinqToKnowledgeBase.Propositional.Benchmarks
+namespace LinqToKnowledgeBase.PropositionalLogic.Benchmarks
 {
     [MemoryDiagnoser]
     [InProcess]
@@ -20,15 +21,16 @@ namespace LinqToKnowledgeBase.Propositional.Benchmarks
         }
 
         [Benchmark]
-        public bool TruthTable()
-        {
-            var kb = MakeTTKnowledgeBase();
-            return kb.Ask(m => m.Fact10);
-        }
+        public bool TruthTableForwardChain() => ForwardChain(new TruthTableKnowledgeBase<MyModel>());
 
-        private static TruthTableKnowledgeBase<MyModel> MakeTTKnowledgeBase()
+        [Benchmark]
+        public bool ResolutionForwardChain() => ForwardChain(new ResolutionKnowledgeBase<MyModel>());
+
+        [Benchmark]
+        public bool AiAModernApproachResolutionForwardChain() => ForwardChain(new AiAModernApproachResolutionKB());
+
+        private static bool ForwardChain(IKnowledgeBase<MyModel> kb)
         {
-            var kb = new TruthTableKnowledgeBase<MyModel>();
             kb.Tell(Implies(m => m.Fact1, m => m.Fact2));
             kb.Tell(Implies(m => m.Fact2, m => m.Fact3));
             kb.Tell(Implies(m => m.Fact3, m => m.Fact4));
@@ -39,7 +41,14 @@ namespace LinqToKnowledgeBase.Propositional.Benchmarks
             kb.Tell(Implies(m => m.Fact8, m => m.Fact9));
             kb.Tell(Implies(m => m.Fact9, m => m.Fact10));
             kb.Tell(m => m.Fact1);
-            return kb;
+
+            bool result = kb.Ask(m => m.Fact10);
+            if (!result)
+            {
+                throw new System.Exception("Got the wrong result!");
+            }
+
+            return result;
         }
 
         public class MyModel

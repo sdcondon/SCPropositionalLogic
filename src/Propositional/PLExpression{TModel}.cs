@@ -1,7 +1,8 @@
-﻿using System;
+﻿using LinqToKnowledgeBase.PropositionalLogic.InternalUtilities;
+using System;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.Propositional
+namespace LinqToKnowledgeBase.PropositionalLogic
 {
     /// <summary>
     /// Factory methods for propositional logic expressions.
@@ -24,11 +25,11 @@ namespace LinqToKnowledgeBase.Propositional
             // We essentially want !p.Body || q.Body, but with the parameter expressions in each replaced with a new singular one.
             // That's what ParameterReplacer does for us. Note that the name of the parameter from the first is used. Should we
             // complain if the name of the parameter in the second is different? Seems overkill..
-            var pr = new ParameterReplacer(p.Parameters[0].Name);
+            var pr = new ParameterReplacer<TModel>(p.Parameters[0].Name);
 
             return Expression.Lambda<Predicate<TModel>>(
                 Expression.OrElse(
-                    Expression.IsFalse(pr.VisitLambdaBody(p)),
+                    Expression.Not(pr.VisitLambdaBody(p)),
                     pr.VisitLambdaBody(q)),
                 pr.NewParameter);
         }
@@ -46,33 +47,11 @@ namespace LinqToKnowledgeBase.Propositional
             // learning resource for details.
             // There's also probably a more direct way to write this instead doing parameter replacement three times - but going for readability rather
             // than efficiency for the moment..
-            var pr = new ParameterReplacer(p.Parameters[0].Name);
+            var pr = new ParameterReplacer<TModel>(p.Parameters[0].Name);
 
             var clause1 = Implies(p, q);
             var clause2 = Implies(q, p);
             return Expression.Lambda<Predicate<TModel>>(Expression.AndAlso(pr.VisitLambdaBody(clause1), pr.VisitLambdaBody(clause2)), pr.NewParameter);
-        }
-
-        /// <summary>
-        /// Expression visitor that replaces all parameter references (of the <see cref="TModel" /> type) with a singular one of its own.
-        /// </summary>
-        private class ParameterReplacer : ExpressionVisitor
-        {
-            public ParameterReplacer(string name) => NewParameter = Expression.Parameter(typeof(TModel), name);
-
-            public ParameterExpression NewParameter { get; private set; }
-
-            public override Expression Visit(Expression node)
-            {
-                if (node is ParameterExpression parameterExpression && parameterExpression.Type == NewParameter.Type)
-                {
-                    return NewParameter;
-                }
-
-                return base.Visit(node);
-            }
-
-            public Expression VisitLambdaBody(Expression<Predicate<TModel>> lambda) => Visit(lambda.Body);
         }
     }
 }

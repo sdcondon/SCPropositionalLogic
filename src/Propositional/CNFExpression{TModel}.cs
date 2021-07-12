@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.Propositional
+namespace LinqToKnowledgeBase.PropositionalLogic
 {
     /// <summary>
     /// Representation of a predicate lambda expression in conjunctive normal form (CNF).
@@ -18,7 +18,7 @@ namespace LinqToKnowledgeBase.Propositional
         {
             Lambda = CNFConverter.ConvertToCNF(lambda);
             var clauses = new List<CNFClause<TModel>>();
-            new ClauseBuilder(this, clauses).Visit(Lambda.Body);
+            new ExpressionConstructor(this, clauses).Visit(Lambda.Body);
             Clauses = clauses.AsReadOnly();
         }
 
@@ -35,12 +35,12 @@ namespace LinqToKnowledgeBase.Propositional
         /// <summary>
         /// Expression visitor that constructs a set of <see cref="CNFClause{TModel}"/> objects from a lambda in CNF.
         /// </summary>
-        private class ClauseBuilder : ExpressionVisitor
+        private class ExpressionConstructor : ExpressionVisitor
         {
             private readonly CNFExpression<TModel> owner;
             private readonly List<CNFClause<TModel>> clauses;
 
-            public ClauseBuilder(CNFExpression<TModel> owner, List<CNFClause<TModel>> clauses) => (this.owner, this.clauses) = (owner, clauses);
+            public ExpressionConstructor(CNFExpression<TModel> owner, List<CNFClause<TModel>> clauses) => (this.owner, this.clauses) = (owner, clauses);
 
             /// <inheritdoc />
             public override Expression Visit(Expression node)
