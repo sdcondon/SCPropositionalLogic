@@ -41,7 +41,7 @@ namespace LinqToKB.PropositionalLogic
             public override Expression Visit(Expression node)
             {
                 // TODO-ROBUSTNESS: throw for anything that can't be used? whitelist is AndAlso, OrElse, Not, Parameter access (of a bool - but that implied by other limitations)?
-                // Or (better): just stop and return node as soon as we hit anything with non-boolean-valued children (i.e. treat it as an atomic sentence)?
+                // Or (better): just stop and return node as soon as we hit anything else - and treat it as an atomic sentence?
                 // TODO-MAINTAINABILITY: this feels like a more fundamental bit of logic than specific to CNF? Considering a redesign where PLExpression<> is instantiable..
 
                 if (node is UnaryExpression u && u.NodeType == ExpressionType.Not)
@@ -84,7 +84,7 @@ namespace LinqToKB.PropositionalLogic
                             Expression.OrElse(b.Left, andAlsoRight.Left),
                             Expression.OrElse(b.Left, andAlsoRight.Right));
                     }
-                    else if (b.Left is BinaryExpression andAlsoLeft && andAlsoLeft.NodeType == ExpressionType.AndAlso) // TODO: hmm. else. need to revisit this to verify no bugs..
+                    else if (b.Left is BinaryExpression andAlsoLeft && andAlsoLeft.NodeType == ExpressionType.AndAlso)
                     {
                         // Apply distribution of ∨ over ∧: ((β ∧ γ) ∨ α) ≡ ((β ∨ α) ∧ (γ ∨ α))
                         node = Expression.AndAlso(

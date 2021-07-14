@@ -182,12 +182,9 @@ namespace LinqToKB.PropositionalLogic
 
                 if (moveNext2 && !literals2.MoveNext())
                 {
-                    if (moveNext1)
+                    foreach (var resolvent in resolvents)
                     {
-                        foreach (var resolvent in resolvents)
-                        {
-                            resolvent.Add(literals1.Current);
-                        }
+                        resolvent.Add(literals1.Current);
                     }
 
                     while (literals1.MoveNext())
