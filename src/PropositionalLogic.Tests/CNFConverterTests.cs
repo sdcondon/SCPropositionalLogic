@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace LinqToKnowledgeBase.PropositionalLogic
+namespace LinqToKB.PropositionalLogic
 {
     public class CNFConverterTests
     {

@@ -2,12 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
-    <RootNamespace>LinqToKnowledgeBase.Propositional</RootNamespace>
-
-    <AssemblyName>cd</AssemblyName>
+    <AssemblyName>LinqToKB.PropositionalLogic.Tests</AssemblyName>
+    <RootNamespace>LinqToKB.PropositionalLogic</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Propositional\PropositionalLogic.csproj" />
+    <ProjectReference Include="..\PropositionalLogic\PropositionalLogic.csproj" />
   </ItemGroup>
 
 </Project>

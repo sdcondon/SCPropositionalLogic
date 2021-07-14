@@ -2,7 +2,7 @@
 using System.Linq;
 using Xunit;
 
-namespace LinqToKnowledgeBase.PropositionalLogic
+namespace LinqToKB.PropositionalLogic
 {
     public class CNFExpressionTests
     {

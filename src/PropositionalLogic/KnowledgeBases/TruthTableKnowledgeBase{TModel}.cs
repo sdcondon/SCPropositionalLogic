@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases
+namespace LinqToKB.PropositionalLogic.KnowledgeBases
 {
     /// <summary>
     /// Knowledge base that satisfies queries by enumerating all possible models, returning true if and only if the query holds
@@ -34,16 +34,16 @@ namespace LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases
         }
 
         /// <summary>
-        /// Inform the knowledge base that a given statement about the domain is always true.
+        /// Tells the knowledge base that a given expression evaluates as true for all models that it will be asked about.
         /// </summary>
-        /// <param name="sentence">The statement that is always true.</param>
+        /// <param name="expression">The expression that is always true.</param>
         public void Tell(Expression<Predicate<TModel>> sentence) => sentences.Add(sentence);
 
         /// <summary>
-        /// Ask the knowledge base if a given statement about the model is true, given what it knows.
+        /// Asks the knowledge base if a given expression about the model must evaluate as true, given what it knows.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns>True if the statement is known to be true, false if it is known to be false or cannot be determined.</returns>
+        /// <param name="expression">The expression to ask about.</param>
+        /// <returns>True if the expression is known to be true, false if it is known to be false or cannot be determined.</returns>
         public bool Ask(Expression<Predicate<TModel>> query)
         {
             /*

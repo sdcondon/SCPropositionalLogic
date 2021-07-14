@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.PropositionalLogic
+namespace LinqToKB.PropositionalLogic
 {
     /// <summary>
     /// Representation of a literal of propositional logic. That is, an atomic sentence or a negated atomic sentence.
@@ -73,7 +73,7 @@ namespace LinqToKnowledgeBase.PropositionalLogic
         public PLAtomicSentence<TModel> AtomicSentence => atomicSentence;
 
         /// <summary>
-        ///Constructs and returns a literal that is the negation of this one.
+        /// Constructs and returns a literal that is the negation of this one.
         /// </summary>
         /// <returns>A literal that is the negation of this one.</returns>
         public PLLiteral<TModel> Negate() => new PLLiteral<TModel>(AtomicSentence, !IsNegated);

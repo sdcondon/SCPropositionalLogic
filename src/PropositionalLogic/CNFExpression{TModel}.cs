@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.PropositionalLogic
+namespace LinqToKB.PropositionalLogic
 {
     /// <summary>
     /// Representation of a predicate lambda expression in conjunctive normal form (CNF).

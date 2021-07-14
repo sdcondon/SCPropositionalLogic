@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.PropositionalLogic
+namespace LinqToKB.PropositionalLogic
 {
     /// <summary>
     /// Linq expression visitor that converts the visited expression to conjunctive normal form.

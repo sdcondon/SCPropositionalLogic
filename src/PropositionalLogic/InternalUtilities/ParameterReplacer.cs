@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.PropositionalLogic.InternalUtilities
+namespace LinqToKB.PropositionalLogic.InternalUtilities
 {
     /// <summary>
     /// Expression visitor that replaces all parameter references (of the <see cref="TModel" /> type) with a singular one of its own.

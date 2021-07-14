@@ -1,11 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases;
+using LinqToKB.PropositionalLogic.KnowledgeBases;
 using System.Reflection;
-using static LinqToKnowledgeBase.PropositionalLogic.PLExpression<LinqToKnowledgeBase.PropositionalLogic.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
-using AiAModernApproachResolutionKB = LinqToKnowledgeBase.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach.ResolutionKnowledgeBase<LinqToKnowledgeBase.PropositionalLogic.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
+using static LinqToKB.PropositionalLogic.PLExpression<LinqToKB.PropositionalLogic.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
+using AiAModernApproachResolutionKB = LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach.ResolutionKnowledgeBase<LinqToKB.PropositionalLogic.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
 
-namespace LinqToKnowledgeBase.PropositionalLogic.Benchmarks
+namespace LinqToKB.PropositionalLogic.Benchmarks
 {
     [MemoryDiagnoser]
     [InProcess]

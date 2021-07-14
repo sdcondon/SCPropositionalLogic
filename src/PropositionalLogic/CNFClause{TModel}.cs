@@ -1,15 +1,18 @@
-﻿using LinqToKnowledgeBase.PropositionalLogic.InternalUtilities;
+﻿using LinqToKB.PropositionalLogic.InternalUtilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.PropositionalLogic
+namespace LinqToKB.PropositionalLogic
 {
     /// <summary>
     /// Representation of an individual clause of a predicate expression in conjunctive normal form - that is, a disjunction of literals (<see cref="PLLiteral{TModel}"/>s).
     /// </summary>
     /// <typeparam name="TModel">The type that the literals of this clause refer to.</typeparam>
+    /// <remarks>
+    /// "Clausal sentence" also seems to be part of the terminology. Could perhaps be renamed to PLClausalSentence?
+    /// </remarks>
     public class CNFClause<TModel>
     {
         private static readonly LiteralComparer literalComparer = new LiteralComparer();
@@ -117,7 +120,7 @@ namespace LinqToKnowledgeBase.PropositionalLogic
         /// </remarks>
         public static IEnumerable<CNFClause<TModel>> Resolve(CNFClause<TModel> clause1, CNFClause<TModel> clause2)
         {
-            // find complementary literals - sorted nature of literals helps
+            // Find complementary literals - sorted nature of literals helps
             var resolvents = new List<SortedSet<PLLiteral<TModel>>>();
             var resolventPrototype = new SortedSet<PLLiteral<TModel>>(literalComparer);
             var literals1 = clause1.Literals.GetEnumerator();
@@ -137,21 +140,21 @@ namespace LinqToKnowledgeBase.PropositionalLogic
                 resolventPrototype.Add(literal);
             }
 
-            void AddResolvent(PLLiteral<TModel> literal1, PLLiteral<TModel> literal2)
+            void AddResolvent(PLLiteral<TModel> literal, PLLiteral<TModel> complementaryLiteral)
             {
                 // Add both literals to existing resolvents
                 foreach (var resolvent in resolvents)
                 {
-                    resolvent.Add(literal1);
-                    resolvent.Add(literal2);
+                    resolvent.Add(literal);
+                    resolvent.Add(complementaryLiteral);
                 }
 
-                // Add another resolvent if appropriate
+                // Add another resolvent
                 resolvents.Add(new SortedSet<PLLiteral<TModel>>(resolventPrototype, literalComparer));
 
                 // Add both to resolvent prototype
-                resolventPrototype.Add(literal1);
-                resolventPrototype.Add(literal2);
+                resolventPrototype.Add(literal);
+                resolventPrototype.Add(complementaryLiteral);
             }
 
             bool MoveNext(bool moveNext1, bool moveNext2)
@@ -220,11 +223,11 @@ namespace LinqToKnowledgeBase.PropositionalLogic
                 }
             }
 
-            return resolvents.Select(r => new CNFClause<TModel>(r));
-            
-            // resolve by each of them?
             // Q1: Should we be discarding trivially true output clauses (that contain another complementary literal)?
-            // Q2: does any clause pair that contains more than one complementary literal necessarily only yield trivially true clauses? Seems like it must?
+            // Q2: does any clause pair that contains more than one complementary literal pair necessarily only yield trivially true clauses? Seems like it must?
+            // This method could be simplified and made more performant depending on the answers to those questions, but the source material doesn't make
+            // this clear so I have erred on the side of caution..
+            return resolvents.Select(r => new CNFClause<TModel>(r));
         }
 
         /// <inheritdoc />

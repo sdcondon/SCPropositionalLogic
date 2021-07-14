@@ -1,10 +1,9 @@
-﻿using LinqToKnowledgeBase.PropositionalLogic.KnowledgeBases;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
+namespace LinqToKB.PropositionalLogic.KnowledgeBases
 {
     /// <summary>
     /// Knowledge base that uses resolution to answer queries.
@@ -40,52 +39,59 @@ namespace LinqToKnowledgeBase.PropositionalLogic.Benchmarks.Alternatives.FromAiA
         private readonly List<CNFExpression<TModel>> sentences = new List<CNFExpression<TModel>>();
 
         /// <summary>
-        /// Inform the knowledge base that a given statement about the domain is true for all models that it will be asked about.
+        /// Tells the knowledge base that a given expression evaluates as true for all models that it will be asked about.
         /// </summary>
-        /// <param name="sentence">The statement that is always true.</param>
+        /// <param name="expression">The expression that is always true.</param>
         public void Tell(Expression<Predicate<TModel>> sentence)
         {
             sentences.Add(new CNFExpression<TModel>(sentence));
         }
 
         /// <summary>
-        /// Ask the knowledge base if a given statement about the model is true, given what it knows.
+        /// Asks the knowledge base if a given expression about the model must evaluate as true, given what it knows.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns>True if the statement is known to be true, false if it is known to be false or cannot be determined.</returns>
+        /// <param name="expression">The expression to ask about.</param>
+        /// <returns>True if the expression is known to be true, false if it is known to be false or cannot be determined.</returns>
         public bool Ask(Expression<Predicate<TModel>> query)
         {
             var negationOfQuery = Expression.Lambda<Predicate<TModel>>(Expression.Not(query.Body), query.Parameters);
             var negationOfQueryAsCnf = new CNFExpression<TModel>(negationOfQuery);
             var clauses = sentences.Append(negationOfQueryAsCnf).SelectMany(s => s.Clauses).ToHashSet();
-            HashSet<CNFClause<TModel>> newClauses = new HashSet<CNFClause<TModel>>();
+            var queue = new Queue<(CNFClause<TModel>, CNFClause<TModel>)>();
 
-            while (true)
+            foreach (var ci in clauses)
             {
-                // TODO-PERFORMANCE: While this is how the source book writes the algorithm, its rather inefficient -
-                // we'll end up resolving the same clauses again and again. Need to improve this (and move this 
-                // implementation to the benchmarks project as a baseline). Perhaps a queue?
-                foreach (var ci in clauses)
+                foreach (var cj in clauses)
                 {
-                    foreach (var cj in clauses)
+                    queue.Enqueue((ci, cj));
+                }
+            }
+
+            while (queue.Count > 0)
+            {
+                var (ci, cj) = queue.Dequeue();
+                var resolvents = CNFClause<TModel>.Resolve(ci, cj);
+
+                foreach (var resolvent in resolvents)
+                {
+                    if (resolvent.Equals(CNFClause<TModel>.Empty))
                     {
-                        var resolvents = CNFClause<TModel>.Resolve(ci, cj);
-                        if (resolvents.Contains(CNFClause<TModel>.Empty))
+                        return true;
+                    }
+
+                    if (!clauses.Contains(resolvent))
+                    {
+                        foreach (var clause in clauses)
                         {
-                            return true;
+                            queue.Enqueue((clause, resolvent));
                         }
 
-                        newClauses.UnionWith(resolvents);
+                        clauses.Add(resolvent);
                     }
                 }
-
-                if (newClauses.IsSubsetOf(clauses))
-                {
-                    return false;
-                }
-
-                clauses.UnionWith(newClauses);
             }
+
+            return false;
         }
     }
 }

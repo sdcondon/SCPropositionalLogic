@@ -1,8 +1,8 @@
-﻿using LinqToKnowledgeBase.PropositionalLogic.InternalUtilities;
+﻿using LinqToKB.PropositionalLogic.InternalUtilities;
 using System;
 using System.Linq.Expressions;
 
-namespace LinqToKnowledgeBase.PropositionalLogic
+namespace LinqToKB.PropositionalLogic
 {
     /// <summary>
     /// Factory methods for propositional logic expressions.
