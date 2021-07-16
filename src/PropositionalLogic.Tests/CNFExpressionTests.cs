@@ -99,6 +99,67 @@ namespace LinqToKB.PropositionalLogic
         }
 
         [Fact]
+        public void ConstructionOfNonNormalExpression2()
+        {
+            // NB: We don't remove the trivially true clauses (e.g. P ∨ ¬P) - none of the source material
+            // references this as being part of the normalisation process. But we probably should..
+            new CNFExpression<MyModel>(m => (m.P && m.Q) || (!m.P && !m.Q)).Should().BeEquivalentTo(new
+            {
+                Clauses = new[]
+                {
+                    new
+                    {
+                        IsDefiniteClause = true,
+                        IsGoalClause = false,
+                        IsHornClause = true,
+                        IsUnitClause = false,
+                        Literals = new[]
+                        {
+                            new { AtomicSentence = new { Symbol = "P" }, IsNegated = false },
+                            new { AtomicSentence = new { Symbol = "P" }, IsNegated = true },
+                        }
+                    },
+                    new
+                    {
+                        IsDefiniteClause = true,
+                        IsGoalClause = false,
+                        IsHornClause = true,
+                        IsUnitClause = false,
+                        Literals = new[]
+                        {
+                            new { AtomicSentence = new { Symbol = "P" }, IsNegated = false },
+                            new { AtomicSentence = new { Symbol = "Q" }, IsNegated = true },
+                        }
+                    },
+                    new
+                    {
+                        IsDefiniteClause = true,
+                        IsGoalClause = false,
+                        IsHornClause = true,
+                        IsUnitClause = false,
+                        Literals = new[]
+                        {
+                            new { AtomicSentence = new { Symbol = "Q" }, IsNegated = false },
+                            new { AtomicSentence = new { Symbol = "P" }, IsNegated = true }
+                        }
+                    },
+                    new
+                    {
+                        IsDefiniteClause = true,
+                        IsGoalClause = false,
+                        IsHornClause = true,
+                        IsUnitClause = false,
+                        Literals = new[]
+                        {
+                            new { AtomicSentence = new { Symbol = "Q" }, IsNegated = false },
+                            new { AtomicSentence = new { Symbol = "Q" }, IsNegated = true }
+                        }
+                    }
+                }
+            });
+        }
+
+        [Fact]
         public void ResolutionOfResolvableClauses()
         {
             var resolvents = CNFClause<MyModel>.Resolve(
