@@ -71,8 +71,9 @@ namespace LinqToKB.PropositionalLogic
                 {
                     // TODO-ROBUSTNESS: Need more here - ideally, it should be exhaustive.. Really need
                     // comprehensively defined strategy for exactly how lambdas are interpreted as PL sentences.
-                    // TODO-PERFORMANCE: MetadataToken is an int - so boxing. Can we specify the surrogate as an int? Depends on other expr types..
-                    MemberExpression memberExpr => (memberExpr.Member.MetadataToken, memberExpr.Member.Name),
+                    // TODO-PERFORMANCE: Value tuple for equality surrogate - so boxing. Does't happen a lot though, so probably okay. Keep an eye on what the surrogate looks like for other expression types as they are added..
+                    MemberExpression memberExpr => ((memberExpr.Member.Module, memberExpr.Member.MetadataToken), memberExpr.Member.Name),
+                    
                     _ => throw new NotSupportedException($"Node type {node.GetType()} ({node.NodeType}) not supported"),
                 };
 

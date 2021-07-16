@@ -16,7 +16,7 @@ namespace LinqToKB.PropositionalLogic
         /// <param name="lambda">The predicate to represent.</param>
         public CNFExpression(Expression<Predicate<TModel>> lambda)
         {
-            Lambda = CNFConverter.ConvertToCNF(lambda);
+            Lambda = new CNFConverter().VisitAndConvert(lambda, nameof(CNFConverter));
             var clauses = new List<CNFClause<TModel>>();
             new ExpressionConstructor(this, clauses).Visit(Lambda.Body);
             Clauses = clauses.AsReadOnly();
@@ -31,6 +31,91 @@ namespace LinqToKB.PropositionalLogic
         /// Gets the collection of clauses that comprise this expression.
         /// </summary>
         public IReadOnlyCollection<CNFClause<TModel>> Clauses { get; }
+
+        /// <summary>
+        /// Linq expression visitor that converts the visited expression to conjunctive normal form.
+        /// </summary>
+        private class CNFConverter : ExpressionVisitor
+        {
+            private readonly NegationNormalFormConverter negationNormalFormConverter = new NegationNormalFormConverter();
+            private readonly OrDistributor orDistributor = new OrDistributor();
+
+            /// <inheritdoc />
+            public override Expression Visit(Expression node)
+            {
+                // NB: the way this works implicitly treats everything that is not an AndAlso, OrElse or a Not as an atomic sentence - 
+                // which should make the library somewhat flexible in what kinds of models it acts against.
+                // TODO-ROBUSTNESS: Should probably add And (&) and Or (|) as well, for good measure?
+                // TODO-MAINTAINABILITY: this feels like a more fundamental bit of logic than specific to CNF? Considering a redesign where PLExpression<> is instantiable..?
+                
+                // Need to completely convert to NNF before distributing ORs,
+                // else stuff will be missed. Hence the separate subconverters.
+                node = negationNormalFormConverter.Visit(node);
+                node = orDistributor.Visit(node);
+                return node;
+            }
+        }
+
+        /// <summary>
+        /// Expression visitor that converts to negation normal form by repeated elimination of double negatives and application of de Morgans laws.
+        /// </summary>
+        private class NegationNormalFormConverter : ExpressionVisitor
+        {
+            /// <inheritdoc />
+            public override Expression Visit(Expression node)
+            {
+                if (node is UnaryExpression u && u.NodeType == ExpressionType.Not)
+                {
+                    if (u.Operand is UnaryExpression not && not.NodeType == ExpressionType.Not)
+                    {
+                        // Eliminate double negative: ¬(¬P) ≡ P
+                        node = not.Operand;
+                    }
+                    else if (u.Operand is BinaryExpression andAlso && andAlso.NodeType == ExpressionType.AndAlso)
+                    {
+                        // Apply de Morgan: ¬(P ∧ Q) ≡ (¬P ∨ ¬Q)
+                        node = Expression.OrElse(Expression.Not(andAlso.Left), Expression.Not(andAlso.Right));
+                    }
+                    else if (u.Operand is BinaryExpression orElse && orElse.NodeType == ExpressionType.OrElse)
+                    {
+                        // Apply de Morgan: ¬(P ∨ Q) ≡ (¬P ∧ ¬Q)
+                        node = Expression.AndAlso(Expression.Not(orElse.Left), Expression.Not(orElse.Right));
+                    }
+                }
+
+                return base.Visit(node);
+            }
+        }
+
+        /// <summary>
+        /// Expression visitor that recursively distributes disjunctions over conjunctions.
+        /// </summary>
+        private class OrDistributor : ExpressionVisitor
+        {
+            /// <inheritdoc />
+            public override Expression Visit(Expression node)
+            {
+                if (node is BinaryExpression b && b.NodeType == ExpressionType.OrElse)
+                {
+                    if (b.Right is BinaryExpression andAlsoRight && andAlsoRight.NodeType == ExpressionType.AndAlso)
+                    {
+                        // Apply distribution of ∨ over ∧: (α ∨ (β ∧ γ)) ≡ ((α ∨ β) ∧ (α ∨ γ))
+                        node = Expression.AndAlso(
+                            Expression.OrElse(b.Left, andAlsoRight.Left),
+                            Expression.OrElse(b.Left, andAlsoRight.Right));
+                    }
+                    else if (b.Left is BinaryExpression andAlsoLeft && andAlsoLeft.NodeType == ExpressionType.AndAlso)
+                    {
+                        // Apply distribution of ∨ over ∧: ((β ∧ γ) ∨ α) ≡ ((β ∨ α) ∧ (γ ∨ α))
+                        node = Expression.AndAlso(
+                            Expression.OrElse(andAlsoLeft.Left, b.Right),
+                            Expression.OrElse(andAlsoLeft.Right, b.Right));
+                    }
+                }
+
+                return base.Visit(node);
+            }
+        }
 
         /// <summary>
         /// Expression visitor that constructs a set of <see cref="CNFClause{TModel}"/> objects from a lambda in CNF.

@@ -10,9 +10,6 @@ namespace LinqToKB.PropositionalLogic
     /// Representation of an individual clause of a predicate expression in conjunctive normal form - that is, a disjunction of literals (<see cref="PLLiteral{TModel}"/>s).
     /// </summary>
     /// <typeparam name="TModel">The type that the literals of this clause refer to.</typeparam>
-    /// <remarks>
-    /// "Clausal sentence" also seems to be part of the terminology. Could perhaps be renamed to PLClausalSentence?
-    /// </remarks>
     public class CNFClause<TModel>
     {
         private static readonly LiteralComparer literalComparer = new LiteralComparer();
@@ -120,7 +117,6 @@ namespace LinqToKB.PropositionalLogic
         /// </remarks>
         public static IEnumerable<CNFClause<TModel>> Resolve(CNFClause<TModel> clause1, CNFClause<TModel> clause2)
         {
-            // Find complementary literals - sorted nature of literals helps
             var resolvents = new List<SortedSet<PLLiteral<TModel>>>();
             var resolventPrototype = new SortedSet<PLLiteral<TModel>>(literalComparer);
             var literals1 = clause1.Literals.GetEnumerator();
@@ -128,35 +124,35 @@ namespace LinqToKB.PropositionalLogic
             var moveNext1 = true;
             var moveNext2 = true;
 
+            // Adds a literal to any existing resolvents & the resolvent prototype
             void AddToResolvents(PLLiteral<TModel> literal)
             {
-                // Add to existing resolvents
                 foreach (var resolvent in resolvents)
                 {
                     resolvent.Add(literal);
                 }
 
-                // Add to resolvent prototype
                 resolventPrototype.Add(literal);
             }
 
+            // Adds a new resolvent, and adds the two complementary literals to any existing 
+            // resolvents and the resolvent prototype
             void AddResolvent(PLLiteral<TModel> literal, PLLiteral<TModel> complementaryLiteral)
             {
-                // Add both literals to existing resolvents
                 foreach (var resolvent in resolvents)
                 {
                     resolvent.Add(literal);
                     resolvent.Add(complementaryLiteral);
                 }
 
-                // Add another resolvent
                 resolvents.Add(new SortedSet<PLLiteral<TModel>>(resolventPrototype, literalComparer));
 
-                // Add both to resolvent prototype
                 resolventPrototype.Add(literal);
                 resolventPrototype.Add(complementaryLiteral);
             }
 
+            // Moves to the next literal in one or both input clauses - adding any remaining
+            // literals in the other clause to the output if either of the clauses is exhausted
             bool MoveNext(bool moveNext1, bool moveNext2)
             {
                 if (moveNext1 && !literals1.MoveNext())
