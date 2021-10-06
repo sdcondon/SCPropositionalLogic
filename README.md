@@ -1,4 +1,6 @@
-﻿# LinqToKB.PropositionalLogic
+﻿**NB: Archived in favour of https://github.com/sdcondon/LinqToKB.FirstOrderLogic**
+ 
+ # LinqToKB.PropositionalLogic
 
 Very simple [propositional logic](https://en.wikipedia.org/wiki/Propositional_calculus) knowledge base implementations that use LINQ expressions for knowledge representation and queries.
 
