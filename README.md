@@ -1,6 +1,4 @@
-﻿**NB: Archived in favour of https://github.com/sdcondon/LinqToKB.FirstOrderLogic**
- 
- # SCPropositionalLogic
+﻿# SCPropositionalLogic
 
 Very simple [propositional logic](https://en.wikipedia.org/wiki/Propositional_calculus) knowledge base implementations.
 
