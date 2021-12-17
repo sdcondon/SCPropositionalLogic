@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Representation of a literal of propositional logic. That is, an atomic sentence or a negated atomic sentence.

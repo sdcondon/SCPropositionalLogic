@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Representation of an individual clause of a propositional logic sentence in conjunctive normal form - that is, a disjunction of literals (<see cref="CNFLiteral"/>s).
@@ -32,22 +32,16 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
             // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
             Literals = new SortedSet<CNFLiteral>(literals, literalComparer);
 
-            if (Literals.Count == 0)
+            // NB: Back when lambdas were the internal representation, when there were no literals we used
+            // a literal False as the sentence - because it is an important maxim of resolution that an
+            // empty clause is unsatisfiable. Time will tell if simply using a null sentence here is acceptable.
+            var sentence = Literals.FirstOrDefault()?.Sentence;
+            foreach (var literal in Literals.Skip(1))
             {
-                // It is an important maxim of first-order logic that empty clauses evaluate to false
-                // TODO: LinqToKB.PredicateLogic offered conversion back to Lambdas so needed this - we don't, so perhaps don't.. Time will tell..
-                ////Sentence = Expression.Lambda<Predicate<TModel>>(Expression.Constant(false), Expression.Parameter(typeof(TModel)));
+                sentence = new Disjunction(sentence, literal.Sentence);
             }
-            else
-            {
-                var sentence = Literals.First().Sentence;
-                foreach (var literal in Literals.Skip(1))
-                {
-                    sentence = new Disjunction(sentence, literal.Sentence);
-                }
 
-                Sentence = sentence;
-            }
+            Sentence = sentence;
         }
 
         /// <summary>

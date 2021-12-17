@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace LinqToKB.PropositionalLogic.LanguageIntegration
+namespace SCPropositionalLogic.LanguageIntegration
 {
     /// <summary>
     /// Representation of a <see cref="Proposition"/> symbol that refers to a particular class member.

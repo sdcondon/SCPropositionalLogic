@@ -1,13 +1,13 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using LinqToKB.PropositionalLogic.Benchmarks.Alternatives;
-using LinqToKB.PropositionalLogic.KnowledgeBases;
-using LinqToKB.PropositionalLogic.LanguageIntegration;
+using SCPropositionalLogic.Benchmarks.Alternatives;
+using SCPropositionalLogic.KnowledgeBases;
+using SCPropositionalLogic.LanguageIntegration;
 using System.Reflection;
-using static LinqToKB.PropositionalLogic.LanguageIntegration.Operators;
-using AiAModernApproachResolutionKB = LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach.ResolutionKnowledgeBase;
+using static SCPropositionalLogic.LanguageIntegration.Operators;
+using AiAModernApproachResolutionKB = SCPropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach.ResolutionKnowledgeBase;
 
-namespace LinqToKB.PropositionalLogic.Benchmarks
+namespace SCPropositionalLogic.Benchmarks
 {
     [MemoryDiagnoser]
     [InProcess]

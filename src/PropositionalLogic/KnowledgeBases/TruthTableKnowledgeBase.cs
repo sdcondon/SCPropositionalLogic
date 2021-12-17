@@ -1,9 +1,9 @@
-﻿using LinqToKB.PropositionalLogic.SentenceManipulation;
+﻿using SCPropositionalLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.PropositionalLogic.KnowledgeBases
+namespace SCPropositionalLogic.KnowledgeBases
 {
     /// <summary>
     /// Knowledge base that satisfies queries by enumerating all possible models, returning true if and only if the query holds
@@ -105,7 +105,7 @@ namespace LinqToKB.PropositionalLogic.KnowledgeBases
 
             public PropositionFinder(HashSet<Proposition> propositions) => this.propositions = propositions;
 
-            public override Sentence ApplyTo(Proposition proposition)
+            protected override Sentence ApplyTo(Proposition proposition)
             {
                 propositions.Add(proposition);
                 return proposition;

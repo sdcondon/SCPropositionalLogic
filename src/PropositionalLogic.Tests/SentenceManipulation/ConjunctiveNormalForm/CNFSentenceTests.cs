@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static LinqToKB.PropositionalLogic.Sentence;
+using static SCPropositionalLogic.Sentence;
 
-namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     public static class CNFSentenceTests
     {

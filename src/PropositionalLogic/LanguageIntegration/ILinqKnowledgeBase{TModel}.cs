@@ -1,8 +1,8 @@
-﻿using LinqToKB.PropositionalLogic.KnowledgeBases;
+﻿using SCPropositionalLogic.KnowledgeBases;
 using System;
 using System.Linq.Expressions;
 
-namespace LinqToKB.PropositionalLogic.LanguageIntegration
+namespace SCPropositionalLogic.LanguageIntegration
 {
     public interface ILinqKnowledgeBase<TModel>
     {

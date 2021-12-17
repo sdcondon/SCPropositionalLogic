@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace LinqToKB.PropositionalLogic.SentenceManipulation
+namespace SCPropositionalLogic.SentenceManipulation
 {
     /// <summary>
     /// Temporary..

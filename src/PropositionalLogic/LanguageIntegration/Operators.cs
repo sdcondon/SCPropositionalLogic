@@ -1,4 +1,4 @@
-﻿namespace LinqToKB.PropositionalLogic.LanguageIntegration
+﻿namespace SCPropositionalLogic.LanguageIntegration
 {
     /// <summary>
     /// Static methods for logical operators that don't exist in C#.

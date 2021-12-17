@@ -1,8 +1,8 @@
-﻿using LinqToKB.PropositionalLogic.KnowledgeBases;
+﻿using SCPropositionalLogic.KnowledgeBases;
 using System;
 using System.Linq.Expressions;
 
-namespace LinqToKB.PropositionalLogic.LanguageIntegration
+namespace SCPropositionalLogic.LanguageIntegration
 {
     /// <summary>
     /// Adapter class for <see cref="IKnowledgeBase"/> instances that lets predicate logic sentences be supplied as lambda expressions operating on a type representing the model.

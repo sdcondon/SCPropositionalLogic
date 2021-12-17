@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LinqToKB.PropositionalLogic
+namespace SCPropositionalLogic
 {
     /// <summary>
     /// Representation of a conjunction sentence of propositional logic. In typical PL syntax, this is written as:

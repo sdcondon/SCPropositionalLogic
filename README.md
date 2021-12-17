@@ -1,19 +1,19 @@
 ﻿**NB: Archived in favour of https://github.com/sdcondon/LinqToKB.FirstOrderLogic**
  
- # LinqToKB.PropositionalLogic
+ # SCPropositionalLogic
 
 Very simple [propositional logic](https://en.wikipedia.org/wiki/Propositional_calculus) knowledge base implementations.
 
 Created just for fun while reading _Artificial Intelligence: A Modern Approach_ (3rd Edition - [ISBN 978-1292153964](https://www.google.com/search?q=isbn+978-1292153964)) - so may prove interesting to the .NET-inclined reading the same book.
 The main goal here is for it to be a learning resource - as such, care has been taken to include decent XML documentation and explanatory inline comments where appropriate.
 For real-world scenarios, there are other better inference engines out there that use more powerful logics than propositional logic, which is all that's implemented here (and - thus far at least - only in the most basic of ways).
-This repo does serve as a precursor to [LinqToKB.FirstOrderLogic]() though, which should be more useful (though also very basic). 
+This repo does serve as a precursor to [LinqToKB.FirstOrderLogic](https://github.com/sdcondon/LinqToKB.FirstOrderLogic) though, which should be more useful (though also very basic). 
 
 For usage examples, see the tests.
 
 ## Language Integration
 
-The only non-obvious part of this is the classes in the LanguageIntegration namespace, which allow for specifying PL sentences as LINQ expressions.
+No doubt there are countless propositional logic library out there for .NET. The only perhaps non-obvious part of this is the classes in the LanguageIntegration namespace, which allow for specifying PL sentences as LINQ expressions.
 
 Benefits of using LINQ expressions:
 * Your sentences of propositional logic can be expressed as familiar, plain-old C#, using the operators you would probably expect - `&&`, `||` and `!` (NB not `&` and `|` yet..).

@@ -1,6 +1,6 @@
-﻿using LinqToKB.PropositionalLogic.SentenceManipulation;
+﻿using SCPropositionalLogic.SentenceManipulation;
 
-namespace LinqToKB.PropositionalLogic
+namespace SCPropositionalLogic
 {
     /// <summary>
     /// Representation of a sentence of propositional logic.

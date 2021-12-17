@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LinqToKB.PropositionalLogic.LanguageIntegration
+namespace SCPropositionalLogic.LanguageIntegration
 {
     /// <summary>
     /// Static factory methods for creating <see cref="Sentence"/> instances from LINQ expressions operating on an (<see cref="IEnumerable{T}"/>) object representing the domain.
@@ -112,7 +112,7 @@ namespace LinqToKB.PropositionalLogic.LanguageIntegration
         /// <summary>
         /// Tries to create a <see cref="Equivalence"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>Operators.Iff({expression}, {expression})</code>
-        /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Operators;</c> to make this a little shorter)
+        /// (Consumers are encouraged to include <c>using static SCPropositionalLogic.LanguageIntegration.Operators;</c> to make this a little shorter)
         /// </summary>
         private static bool TryCreateEquivalence<TModel>(Expression expression, out Sentence sentence)
         {
@@ -133,7 +133,7 @@ namespace LinqToKB.PropositionalLogic.LanguageIntegration
         /// <summary>
         /// Tries to create a <see cref="Implication"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>Operators.If({expression}, {expression})</code>
-        /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Symbols;</c> to make this a little shorter)
+        /// (Consumers are encouraged to include <c>using static SCPropositionalLogic.LanguageIntegration.Operators;</c> to make this a little shorter)
         /// </summary>
         private static bool TryCreateImplication<TModel>(Expression expression, out Sentence sentence)
         {

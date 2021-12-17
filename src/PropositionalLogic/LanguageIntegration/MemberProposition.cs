@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace LinqToKB.PropositionalLogic.LanguageIntegration
+namespace SCPropositionalLogic.LanguageIntegration
 {
     /// <summary>
     /// Representation of a proposition sentence of first order logic.

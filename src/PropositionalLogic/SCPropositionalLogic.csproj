@@ -2,19 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>LinqToKB.PropositionalLogic</AssemblyName>
-    <RootNamespace>LinqToKB.PropositionalLogic</RootNamespace>
+    <AssemblyName>SCPropositionalLogic</AssemblyName>
+    <RootNamespace>SCPropositionalLogic</RootNamespace>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageIcon>LinqToKBIcon.png</PackageIcon>
-    <Description>Propositional logic inference engine in which knowledge and queries are represented by LINQ expressions.</Description>
+    <Description>Very simple propositional logic inference engine - mostly for learning. Includes language integration features.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageTags>linq inference-engine propositional-logic knowledge-base</PackageTags>
+    <PackageTags>inference-engine propositional-logic knowledge-base linq</PackageTags>
   </PropertyGroup>
-
-  <ItemGroup>
-	<None Include="$(SolutionDir)\LinqToKBIcon.png" Link="LinqToKBIcon.png" Pack="true" PackagePath="" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="SauceControl.InheritDoc" Version="1.3.0">

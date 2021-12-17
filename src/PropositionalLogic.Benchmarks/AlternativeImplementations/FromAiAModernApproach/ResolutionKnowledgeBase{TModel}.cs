@@ -1,10 +1,10 @@
-﻿using LinqToKB.PropositionalLogic.KnowledgeBases;
-using LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm;
+﻿using SCPropositionalLogic.KnowledgeBases;
+using SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
+namespace SCPropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
 {
     /// <summary>
     /// Knowledge base that uses resolution to answer queries.

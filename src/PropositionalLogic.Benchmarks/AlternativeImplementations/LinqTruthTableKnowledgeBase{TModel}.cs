@@ -1,11 +1,11 @@
-﻿using LinqToKB.PropositionalLogic.LanguageIntegration;
+﻿using SCPropositionalLogic.LanguageIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LinqToKB.PropositionalLogic.Benchmarks.Alternatives
+namespace SCPropositionalLogic.Benchmarks.Alternatives
 {
     /// <summary>
     /// Knowledge base that satisfies queries by enumerating all possible models, returning true if and only if the query holds

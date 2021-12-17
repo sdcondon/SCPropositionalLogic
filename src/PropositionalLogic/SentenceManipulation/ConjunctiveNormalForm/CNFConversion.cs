@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.
@@ -35,7 +35,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         private class ImplicationElimination : SentenceTransformation
         {
             /// <inheritdoc />
-            public override Sentence ApplyTo(Implication implication)
+            protected override Sentence ApplyTo(Implication implication)
             {
                 return ApplyTo(new Disjunction(
                     new Negation(implication.Antecedent),
@@ -43,7 +43,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
             }
 
             /// <inheritdoc />
-            public override Sentence ApplyTo(Equivalence equivalence)
+            protected override Sentence ApplyTo(Equivalence equivalence)
             {
                 return ApplyTo(new Conjunction(
                     new Disjunction(new Negation(equivalence.Left), equivalence.Right),
@@ -57,7 +57,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         private class NNFConversion : SentenceTransformation
         {
             /// <inheritdoc />
-            public override Sentence ApplyTo(Negation negation)
+            protected override Sentence ApplyTo(Negation negation)
             {
                 Sentence sentence;
 
@@ -94,7 +94,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         /// </summary>
         private class DisjunctionDistribution : SentenceTransformation
         {
-            public override Sentence ApplyTo(Disjunction disjunction)
+            protected override Sentence ApplyTo(Disjunction disjunction)
             {
                 Sentence sentence;
 

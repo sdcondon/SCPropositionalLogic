@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using FlUnit;
 
-namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     public class CNFClauseTests
     {

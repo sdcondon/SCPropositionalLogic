@@ -1,8 +1,8 @@
 ﻿using FlUnit;
 using FluentAssertions;
-using static LinqToKB.PropositionalLogic.Sentence;
+using static SCPropositionalLogic.Sentence;
 
-namespace LinqToKB.PropositionalLogic.KnowledgeBases
+namespace SCPropositionalLogic.KnowledgeBases
 {
     public static class ResolutionKnowledgeBaseTests
     {

@@ -3,9 +3,9 @@ using FlUnit;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using static LinqToKB.PropositionalLogic.LanguageIntegration.Operators;
+using static SCPropositionalLogic.LanguageIntegration.Operators;
 
-namespace LinqToKB.PropositionalLogic.LanguageIntegration
+namespace SCPropositionalLogic.LanguageIntegration
 {
     public class SentenceFactoryTests
     {

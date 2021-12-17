@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
 
-namespace LinqToKB.PropositionalLogic.SentenceManipulation
+namespace SCPropositionalLogic.SentenceManipulation
 {
     /// <summary>
     /// Base class for transformations of <see cref="Sentence"/> instances.
@@ -36,7 +35,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation
         /// </summary>
         /// <param name="conjunction">The conjunction instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Conjunction conjunction)
+        protected virtual Sentence ApplyTo(Conjunction conjunction)
         {
             var left = ApplyTo(conjunction.Left);
             var right = ApplyTo(conjunction.Right);
@@ -54,7 +53,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation
         /// </summary>
         /// <param name="conjunction">The <see cref="Disjunction"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Disjunction disjunction)
+        protected virtual Sentence ApplyTo(Disjunction disjunction)
         {
             var left = ApplyTo(disjunction.Left);
             var right = ApplyTo(disjunction.Right);
@@ -72,7 +71,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation
         /// </summary>
         /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Equivalence equivalence)
+        protected virtual Sentence ApplyTo(Equivalence equivalence)
         {
             var equivalent1 = ApplyTo(equivalence.Left);
             var equivalent2 = ApplyTo(equivalence.Right);
@@ -90,7 +89,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation
         /// </summary>
         /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Implication implication)
+        protected virtual Sentence ApplyTo(Implication implication)
         {
             var antecedent = ApplyTo(implication.Antecedent);
             var consequent = ApplyTo(implication.Consequent);
@@ -109,7 +108,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation
         /// </summary>
         /// <param name="predicate">The <see cref="Proposition"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Proposition proposition)
+        protected virtual Sentence ApplyTo(Proposition proposition)
         {
             return proposition;
         }
@@ -120,7 +119,7 @@ namespace LinqToKB.PropositionalLogic.SentenceManipulation
         /// </summary>
         /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Negation negation)
+        protected virtual Sentence ApplyTo(Negation negation)
         {
             var sentence = ApplyTo(negation.Sentence);
 

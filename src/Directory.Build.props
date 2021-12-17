@@ -2,10 +2,10 @@
   <PropertyGroup>
     <Authors>Simon Condon</Authors>
     <Company />
-    <Product>LinqToKB</Product>
+    <Product>SCPropositionalLogic</Product>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/sdcondon/LinqToKB.git</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/sdcondon/LinqToKB</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/sdcondon/SCPropositionalLogic.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/sdcondon/SCPropositionalLogic</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>2021 Simon Condon</Copyright>
     <IncludeSymbols>true</IncludeSymbols>

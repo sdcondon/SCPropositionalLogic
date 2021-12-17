@@ -1,4 +1,4 @@
-﻿namespace LinqToKB.PropositionalLogic.KnowledgeBases
+﻿namespace SCPropositionalLogic.KnowledgeBases
 {
     /// <summary>
     /// A store of knowledge expressed as sentences of propositional logic.

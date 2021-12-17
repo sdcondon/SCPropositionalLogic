@@ -1,8 +1,8 @@
-﻿using LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm;
+﻿using SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.PropositionalLogic.KnowledgeBases
+namespace SCPropositionalLogic.KnowledgeBases
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.

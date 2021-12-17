@@ -1,9 +1,9 @@
 ﻿using FlUnit;
 using FluentAssertions;
-using static LinqToKB.PropositionalLogic.LanguageIntegration.Operators;
-using LinqToKB.PropositionalLogic.KnowledgeBases;
+using static SCPropositionalLogic.LanguageIntegration.Operators;
+using SCPropositionalLogic.KnowledgeBases;
 
-namespace LinqToKB.PropositionalLogic.LanguageIntegration
+namespace SCPropositionalLogic.LanguageIntegration
 {
     public static class LinqKnowledgeBaseTests
     {

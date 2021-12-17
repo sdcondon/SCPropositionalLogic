@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PropositionalLogic\PropositionalLogic.csproj" />
+    <ProjectReference Include="..\PropositionalLogic\SCPropositionalLogic.csproj" />
   </ItemGroup>
 
 </Project>
