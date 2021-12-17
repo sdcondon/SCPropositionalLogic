@@ -1,9 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using LinqToKB.PropositionalLogic.Benchmarks.Alternatives;
 using LinqToKB.PropositionalLogic.KnowledgeBases;
+using LinqToKB.PropositionalLogic.LanguageIntegration;
 using System.Reflection;
-using static LinqToKB.PropositionalLogic.PLExpression<LinqToKB.PropositionalLogic.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
-using AiAModernApproachResolutionKB = LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach.ResolutionKnowledgeBase<LinqToKB.PropositionalLogic.Benchmarks.KnowledgeBaseBenchmarks.MyModel>;
+using static LinqToKB.PropositionalLogic.LanguageIntegration.Operators;
+using AiAModernApproachResolutionKB = LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach.ResolutionKnowledgeBase;
 
 namespace LinqToKB.PropositionalLogic.Benchmarks
 {
@@ -14,32 +16,37 @@ namespace LinqToKB.PropositionalLogic.Benchmarks
         /// <summary>
         /// Application entry point.
         /// </summary>
+        /// <remarks>
+        /// See https://benchmarkdotnet.org/articles/guides/console-args.html (or run app with --help) for parameter documentation.
+        /// </remarks>
         public static void Main(string[] args)
         {
-            // See https://benchmarkdotnet.org/articles/guides/console-args.html (or run app with --help)
             BenchmarkSwitcher.FromAssembly(Assembly.GetExecutingAssembly()).Run(args);
         }
 
         [Benchmark]
-        public bool TruthTableForwardChain() => ForwardChain(new TruthTableKnowledgeBase<MyModel>());
+        public bool TruthTableForwardChain() => ForwardChain(new LinqKnowledgeBase<MyModel>(new TruthTableKnowledgeBase()));
 
         [Benchmark]
-        public bool ResolutionForwardChain() => ForwardChain(new ResolutionKnowledgeBase<MyModel>());
+        public bool LinqTruthTableForwardChain() => ForwardChain(new LinqTruthTableKnowledgeBase<MyModel>());
 
         [Benchmark]
-        public bool AiAModernApproachResolutionForwardChain() => ForwardChain(new AiAModernApproachResolutionKB());
+        public bool ResolutionForwardChain() => ForwardChain(new LinqKnowledgeBase<MyModel>(new ResolutionKnowledgeBase()));
 
-        private static bool ForwardChain(IKnowledgeBase<MyModel> kb)
+        [Benchmark]
+        public bool AiAModernApproachResolutionForwardChain() => ForwardChain(new LinqKnowledgeBase<MyModel>(new AiAModernApproachResolutionKB()));
+
+        private static bool ForwardChain(ILinqKnowledgeBase<MyModel> kb)
         {
-            kb.Tell(Implies(m => m.Fact1, m => m.Fact2));
-            kb.Tell(Implies(m => m.Fact2, m => m.Fact3));
-            kb.Tell(Implies(m => m.Fact3, m => m.Fact4));
-            kb.Tell(Implies(m => m.Fact4, m => m.Fact5));
-            kb.Tell(Implies(m => m.Fact5, m => m.Fact6));
-            kb.Tell(Implies(m => m.Fact6, m => m.Fact7));
-            kb.Tell(Implies(m => m.Fact7, m => m.Fact8));
-            kb.Tell(Implies(m => m.Fact8, m => m.Fact9));
-            kb.Tell(Implies(m => m.Fact9, m => m.Fact10));
+            kb.Tell(m => If(m.Fact1, m.Fact2));
+            kb.Tell(m => If(m.Fact2, m.Fact3));
+            kb.Tell(m => If(m.Fact3, m.Fact4));
+            kb.Tell(m => If(m.Fact4, m.Fact5));
+            kb.Tell(m => If(m.Fact5, m.Fact6));
+            kb.Tell(m => If(m.Fact6, m.Fact7));
+            kb.Tell(m => If(m.Fact7, m.Fact8));
+            kb.Tell(m => If(m.Fact8, m.Fact9));
+            kb.Tell(m => If(m.Fact9, m.Fact10));
             kb.Tell(m => m.Fact1);
 
             bool result = kb.Ask(m => m.Fact10);

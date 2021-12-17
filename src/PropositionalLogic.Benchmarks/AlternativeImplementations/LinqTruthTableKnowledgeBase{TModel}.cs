@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LinqToKB.PropositionalLogic.LanguageIntegration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LinqToKB.PropositionalLogic.KnowledgeBases
+namespace LinqToKB.PropositionalLogic.Benchmarks.Alternatives
 {
     /// <summary>
     /// Knowledge base that satisfies queries by enumerating all possible models, returning true if and only if the query holds
@@ -15,13 +16,13 @@ namespace LinqToKB.PropositionalLogic.KnowledgeBases
     /// The type that the literals of the rules and queries refer to. NB: Must contain only boolean-valued properties, since that is all the KB can handle.
     /// An exception will be thrown during type initialization otherwise.
     /// </typeparam>
-    public class TruthTableKnowledgeBase<TModel> : IKnowledgeBase<TModel>
+    public class LinqTruthTableKnowledgeBase<TModel> : ILinqKnowledgeBase<TModel>
         where TModel : class, new()
     {
         public static readonly List<Action<TModel, bool>> propertySetters;
         public readonly List<Expression<Predicate<TModel>>> sentences = new List<Expression<Predicate<TModel>>>();
 
-        static TruthTableKnowledgeBase()
+        static LinqTruthTableKnowledgeBase()
         {
             // There are almost certainly a tonne of better (still type-safe) ways to do this, 
             // but this will suffice for getting started.

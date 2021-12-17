@@ -1,8 +1,8 @@
 ﻿using LinqToKB.PropositionalLogic.KnowledgeBases;
+using LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
 {
@@ -14,7 +14,7 @@ namespace LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernAppro
     /// The "purest" form of the algorithm according to the source material in question - but that
     /// makes it rather inefficient. Not really useable in a real scenario.
     /// </remarks>
-    public class ResolutionKnowledgeBase<TModel> : IKnowledgeBase<TModel>
+    public class ResolutionKnowledgeBase : IKnowledgeBase
     {
         /*
          * Figure 7.12 A simple resolution algorithm for propositional logic. The function PL-RESOLVE returns the set of all possible clauses obtained by resolving its two inputs. 
@@ -37,15 +37,15 @@ namespace LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernAppro
                 clauses ← clauses ∪new 
          */
 
-        private readonly List<CNFExpression<TModel>> sentences = new List<CNFExpression<TModel>>();
+        private readonly List<CNFSentence> sentences = new List<CNFSentence>();
 
         /// <summary>
         /// Tells the knowledge base that a given expression evaluates as true for all models that it will be asked about.
         /// </summary>
         /// <param name="expression">The expression that is always true.</param>
-        public void Tell(Expression<Predicate<TModel>> sentence)
+        public void Tell(Sentence sentence)
         {
-            sentences.Add(new CNFExpression<TModel>(sentence));
+            sentences.Add(new CNFSentence(sentence));
         }
 
         /// <summary>
@@ -53,12 +53,12 @@ namespace LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernAppro
         /// </summary>
         /// <param name="expression">The expression to ask about.</param>
         /// <returns>True if the expression is known to be true, false if it is known to be false or cannot be determined.</returns>
-        public bool Ask(Expression<Predicate<TModel>> query)
+        public bool Ask(Sentence query)
         {
-            var negationOfQuery = Expression.Lambda<Predicate<TModel>>(Expression.Not(query.Body), query.Parameters);
-            var negationOfQueryAsCnf = new CNFExpression<TModel>(negationOfQuery);
+            var negationOfQuery = new Negation(query);
+            var negationOfQueryAsCnf = new CNFSentence(negationOfQuery);
             var clauses = sentences.Append(negationOfQueryAsCnf).SelectMany(s => s.Clauses).ToHashSet();
-            HashSet<CNFClause<TModel>> newClauses = new HashSet<CNFClause<TModel>>();
+            HashSet<CNFClause> newClauses = new HashSet<CNFClause>();
 
             while (true)
             {
@@ -69,8 +69,8 @@ namespace LinqToKB.PropositionalLogic.Benchmarks.Alternatives.FromAiAModernAppro
                 {
                     foreach (var cj in clauses)
                     {
-                        var resolvents = CNFClause<TModel>.Resolve(ci, cj);
-                        if (resolvents.Contains(CNFClause<TModel>.Empty))
+                        var resolvents = CNFClause.Resolve(ci, cj);
+                        if (resolvents.Contains(CNFClause.Empty))
                         {
                             return true;
                         }

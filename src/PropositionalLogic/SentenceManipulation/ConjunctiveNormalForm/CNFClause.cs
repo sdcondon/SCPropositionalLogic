@@ -1,84 +1,69 @@
-﻿using LinqToKB.PropositionalLogic.InternalUtilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
-namespace LinqToKB.PropositionalLogic
+namespace LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
-    /// Representation of an individual clause of a predicate expression in conjunctive normal form - that is, a disjunction of literals (<see cref="PLLiteral{TModel}"/>s).
+    /// Representation of an individual clause of a propositional logic sentence in conjunctive normal form - that is, a disjunction of literals (<see cref="CNFLiteral"/>s).
     /// </summary>
-    /// <typeparam name="TModel">The type that the literals of this clause refer to.</typeparam>
-    public class CNFClause<TModel>
+    public class CNFClause
     {
         private static readonly LiteralComparer literalComparer = new LiteralComparer();
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFClause{TModel}"/> class.
+        /// Initialises a new instance of the <see cref="CNFClause"/> class.
         /// </summary>
-        /// <param name="lambda">The clause, represented as a lambda expression.</param>
-        /// <remarks>
-        /// NB: Internal because it makes the assumption that the lambda is a disjunction of literals. If it were public we'd need to verify that.
-        /// </remarks>
-        internal CNFClause(Expression<Predicate<TModel>> lambda)
+        /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>.</param>
+        public CNFClause(Sentence sentence)
         {
-            Lambda = lambda; // Assumed to be a disjunction of literals
-            var literals = new SortedSet<PLLiteral<TModel>>(new LiteralComparer());
-            new ClauseConstructor(this, literals).Visit(lambda.Body);
+            Sentence = sentence;
+            var literals = new SortedSet<CNFLiteral>(new LiteralComparer());
+            new ClauseConstructor(this, literals).ApplyTo(sentence);
             Literals = literals; // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFClause{TModel}"/> class from an enumerable of literals (removing any mutually-negating literals and duplicates as it does so).
+        /// Initialises a new instance of the <see cref="CNFClause"/> class from an enumerable of literals (removing any mutually-negating literals and duplicates as it does so).
         /// </summary>
         /// <param name="lambda">The set of literals to be included in the clause.</param>
-        /// <remarks>
-        /// While there is nothing stopping this being public from a robustness perspective, there is as yet
-        /// no easy way for consumers to instantiate a literal on its own - making it pointless for the
-        /// moment.
-        /// </remarks>
-        internal CNFClause(IEnumerable<PLLiteral<TModel>> literals)
+        public CNFClause(params CNFLiteral[] literals)
         {
             // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
-            Literals = new SortedSet<PLLiteral<TModel>>(literals, literalComparer);
+            Literals = new SortedSet<CNFLiteral>(literals, literalComparer);
 
             if (Literals.Count == 0)
             {
-                // It is an important maxim of propositional logic that empty clauses evaluate to false
-                Lambda = Expression.Lambda<Predicate<TModel>>(Expression.Constant(false), Expression.Parameter(typeof(TModel)));
+                // It is an important maxim of first-order logic that empty clauses evaluate to false
+                // TODO: LinqToKB.PredicateLogic offered conversion back to Lambdas so needed this - we don't, so perhaps don't.. Time will tell..
+                ////Sentence = Expression.Lambda<Predicate<TModel>>(Expression.Constant(false), Expression.Parameter(typeof(TModel)));
             }
             else
             {
-                // NB: The literals here will often be part of completely separate expressions - so will
-                // refer to different parameter expression objects. To combine their lambdas into a single lambda,
-                // we need to unify the referenced parameter expressions into a single one.
-                var parameterReplacer = new ParameterReplacer<TModel>(Literals.First().Lambda.Parameters.Single().Name);
-
-                var node = parameterReplacer.Visit(Literals.First().Lambda.Body);
+                var sentence = Literals.First().Sentence;
                 foreach (var literal in Literals.Skip(1))
                 {
-                    node = Expression.OrElse(node, parameterReplacer.Visit(literal.Lambda.Body));
+                    sentence = new Disjunction(sentence, literal.Sentence);
                 }
 
-                Lambda = Expression.Lambda<Predicate<TModel>>(node, parameterReplacer.NewParameter);
+                Sentence = sentence;
             }
         }
 
         /// <summary>
         /// Returns an instance of the empty clause.
         /// </summary>
-        public static CNFClause<TModel> Empty { get; } = new CNFClause<TModel>(Array.Empty<PLLiteral<TModel>>());
+        public static CNFClause Empty { get; } = new CNFClause(Array.Empty<CNFLiteral>());
 
         /// <summary>
-        /// Gets a representation of this clause as a lambda expression.
+        /// Gets the actual <see cref="Sentence"/> that underlies this representation.
         /// </summary>
-        public Expression<Predicate<TModel>> Lambda { get; }
+        public Sentence Sentence { get; }
 
         /// <summary>
         /// Gets the collection of literals that comprise this clause.
         /// </summary>
-        public IReadOnlyCollection<PLLiteral<TModel>> Literals { get; }
+        public IReadOnlyCollection<CNFLiteral> Literals { get; }
 
         /// <summary>
         /// Gets a value indicating whether this is a Horn clause - that is, whether at most one of its literals is positive.
@@ -115,17 +100,22 @@ namespace LinqToKB.PropositionalLogic
         /// NB: IMO, at the time of writing, http://logic.stanford.edu/intrologic/notes/chapter_05.html is a far better resource 
         /// on propositional resolution than the book mentioned in the readme.
         /// </remarks>
-        public static IEnumerable<CNFClause<TModel>> Resolve(CNFClause<TModel> clause1, CNFClause<TModel> clause2)
+        public static IEnumerable<CNFClause> Resolve(CNFClause clause1, CNFClause clause2)
         {
-            var resolvents = new List<SortedSet<PLLiteral<TModel>>>();
-            var resolventPrototype = new SortedSet<PLLiteral<TModel>>(literalComparer);
+            //// Q1: Should we be discarding trivially true output clauses (that contain another complementary literal)?
+            //// Q2: does any clause pair that contains more than one complementary literal pair necessarily only yield trivially true clauses? Seems like it must?
+            //// This method could be simplified and made more performant depending on the answers to those questions, but the source material doesn't make
+            //// this clear so I have erred on the side of caution..
+
+            var resolvents = new List<SortedSet<CNFLiteral>>();
+            var resolventPrototype = new SortedSet<CNFLiteral>(literalComparer);
             var literals1 = clause1.Literals.GetEnumerator();
             var literals2 = clause2.Literals.GetEnumerator();
             var moveNext1 = true;
             var moveNext2 = true;
 
             // Adds a literal to any existing resolvents & the resolvent prototype
-            void AddToResolvents(PLLiteral<TModel> literal)
+            void AddToResolvents(CNFLiteral literal)
             {
                 foreach (var resolvent in resolvents)
                 {
@@ -135,9 +125,9 @@ namespace LinqToKB.PropositionalLogic
                 resolventPrototype.Add(literal);
             }
 
-            // Adds a new resolvent, and adds the two complementary literals to any existing 
-            // resolvents and the resolvent prototype
-            void AddResolvent(PLLiteral<TModel> literal, PLLiteral<TModel> complementaryLiteral)
+            // Adds a new resolvent using the current resolvent prototype, as well as adding the two
+            // complementary literals to any existing resolvents and the resolvent prototype.
+            void AddResolvent(CNFLiteral literal, CNFLiteral complementaryLiteral)
             {
                 foreach (var resolvent in resolvents)
                 {
@@ -145,13 +135,13 @@ namespace LinqToKB.PropositionalLogic
                     resolvent.Add(complementaryLiteral);
                 }
 
-                resolvents.Add(new SortedSet<PLLiteral<TModel>>(resolventPrototype, literalComparer));
+                resolvents.Add(new SortedSet<CNFLiteral>(resolventPrototype, literalComparer));
 
                 resolventPrototype.Add(literal);
                 resolventPrototype.Add(complementaryLiteral);
             }
 
-            // Moves to the next literal in one or both input clauses - adding any remaining
+            // Attempts to move to the next literal in one or both input clauses - adding any remaining
             // literals in the other clause to the output if either of the clauses is exhausted
             bool MoveNext(bool moveNext1, bool moveNext2)
             {
@@ -202,7 +192,7 @@ namespace LinqToKB.PropositionalLogic
                 var literal1 = literals1.Current;
                 var literal2 = literals2.Current;
 
-                if (literal1.AtomicSentence.Equals(literal2.AtomicSentence) && literal1.IsNegated != literal2.IsNegated)
+                if (literal1.Proposition.Equals(literal2.Proposition) && literal1.IsNegated != literal2.IsNegated)
                 {
                     AddResolvent(literal1, literal2);
                     moveNext1 = moveNext2 = true;
@@ -216,11 +206,7 @@ namespace LinqToKB.PropositionalLogic
                 }
             }
 
-            // Q1: Should we be discarding trivially true output clauses (that contain another complementary literal)?
-            // Q2: does any clause pair that contains more than one complementary literal pair necessarily only yield trivially true clauses? Seems like it must?
-            // This method could be simplified and made more performant depending on the answers to those questions, but the source material doesn't make
-            // this clear so I have erred on the side of caution..
-            return resolvents.Select(r => new CNFClause<TModel>(r));
+            return resolvents.Select(r => new CNFClause(r.ToArray()));
         }
 
         /// <inheritdoc />
@@ -232,7 +218,7 @@ namespace LinqToKB.PropositionalLogic
         /// </remarks>
         public override bool Equals(object obj)
         {
-            if (!(obj is CNFClause<TModel> clause) || Literals.Count != clause.Literals.Count)
+            if (!(obj is CNFClause clause) || Literals.Count != clause.Literals.Count)
             {
                 return false;
             }
@@ -260,41 +246,41 @@ namespace LinqToKB.PropositionalLogic
             return hash.ToHashCode();
         }
 
-        private class ClauseConstructor : ExpressionVisitor
+        private class ClauseConstructor : SentenceTransformation
         {
-            private readonly CNFClause<TModel> owner;
-            private readonly ISet<PLLiteral<TModel>> literals;
+            private readonly CNFClause owner;
+            private readonly ISet<CNFLiteral> literals;
 
-            public ClauseConstructor(CNFClause<TModel> owner, ISet<PLLiteral<TModel>> literals) => (this.owner, this.literals) = (owner, literals);
+            public ClauseConstructor(CNFClause owner, ISet<CNFLiteral> literals) => (this.owner, this.literals) = (owner, literals);
 
-            public override Expression Visit(Expression node)
+            public override Sentence ApplyTo(Sentence sentence)
             {
-                if (node is BinaryExpression orElse && orElse.NodeType == ExpressionType.OrElse)
+                if (sentence is Disjunction)
                 {
-                    // The expression is guaranteed to be a disjunction of literals - so the root down until the individual clauses will all be OrElse - we just skip past those.
-                    return base.Visit(node);
+                    // The sentence is guaranteed to be a disjunction of literals - so the root down until the individual clauses will all be OrElse - we just skip past those.
+                    return base.ApplyTo(sentence);
                 }
-                else
+                else if (sentence is Negation || sentence is Proposition)
                 {
                     // We've hit a literal.
-                    // NB: PLLiteral accepts a lambda - not just an Expression. This is for maximum flexibility,
-                    // so that e.g. literals can be evaluated individually should we so wish. Performance hit to build, but meh..
-                    // So, we need to create a lambda here - easy enough - we just re-use the parameters from the
-                    // overall clause.
-                    literals.Add(new PLLiteral<TModel>(Expression.Lambda<Predicate<TModel>>(node, owner.Lambda.Parameters)));
+                    literals.Add(new CNFLiteral(sentence));
 
                     // We don't need to look any further down the tree for the purposes of this class (though the PLLiteral ctor, above,
                     // does so to figure out the details of the literal). So we can just return node rather than invoking base.Visit. 
-                    return node;
+                    return sentence;
+                }
+                else
+                {
+                    throw new ArgumentException("Sentence is not a CNF clause", nameof(sentence));
                 }
             }
         }
 
-        private class LiteralComparer : IComparer<PLLiteral<TModel>>
+        private class LiteralComparer : IComparer<CNFLiteral>
         {
-            public int Compare(PLLiteral<TModel> x, PLLiteral<TModel> y)
+            public int Compare(CNFLiteral x, CNFLiteral y)
             {
-                var hashComparison = x.AtomicSentence.GetHashCode().CompareTo(y.AtomicSentence.GetHashCode());
+                var hashComparison = x.Proposition.GetHashCode().CompareTo(y.Proposition.GetHashCode());
                 if (hashComparison != 0)
                 {
                     return hashComparison;

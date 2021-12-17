@@ -1,31 +1,29 @@
-﻿using System;
+﻿using LinqToKB.PropositionalLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace LinqToKB.PropositionalLogic.KnowledgeBases
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
     /// </summary>
-    /// <typeparam name="TModel">The type that the literals of the rules and queries refer to.</typeparam>
-    public class ResolutionKnowledgeBase<TModel> : IKnowledgeBase<TModel>
+    public class ResolutionKnowledgeBase : IKnowledgeBase
     {
-        private readonly List<CNFExpression<TModel>> sentences = new List<CNFExpression<TModel>>();
+        private readonly List<CNFSentence> sentences = new List<CNFSentence>();
 
         /// <inheritdoc />
-        public void Tell(Expression<Predicate<TModel>> expression)
+        public void Tell(Sentence sentence)
         {
-            sentences.Add(new CNFExpression<TModel>(expression));
+            sentences.Add(new CNFSentence(sentence));
         }
 
         /// <inheritdoc />
-        public bool Ask(Expression<Predicate<TModel>> query)
+        public bool Ask(Sentence sentence)
         {
-            var negationOfQuery = Expression.Lambda<Predicate<TModel>>(Expression.Not(query.Body), query.Parameters);
-            var negationOfQueryAsCnf = new CNFExpression<TModel>(negationOfQuery);
+            var negationOfQuery = new Negation(sentence);
+            var negationOfQueryAsCnf = new CNFSentence(negationOfQuery);
             var clauses = sentences.Append(negationOfQueryAsCnf).SelectMany(s => s.Clauses).ToHashSet();
-            var queue = new Queue<(CNFClause<TModel>, CNFClause<TModel>)>();
+            var queue = new Queue<(CNFClause, CNFClause)>();
 
             foreach (var ci in clauses)
             {
@@ -38,11 +36,11 @@ namespace LinqToKB.PropositionalLogic.KnowledgeBases
             while (queue.Count > 0)
             {
                 var (ci, cj) = queue.Dequeue();
-                var resolvents = CNFClause<TModel>.Resolve(ci, cj);
+                var resolvents = CNFClause.Resolve(ci, cj);
 
                 foreach (var resolvent in resolvents)
                 {
-                    if (resolvent.Equals(CNFClause<TModel>.Empty))
+                    if (resolvent.Equals(CNFClause.Empty))
                     {
                         return true;
                     }
