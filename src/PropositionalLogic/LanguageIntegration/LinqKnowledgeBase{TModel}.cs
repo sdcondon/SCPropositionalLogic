@@ -12,13 +12,19 @@ namespace SCPropositionalLogic.LanguageIntegration
     {
         private readonly IKnowledgeBase innerKnowledgeBase;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LinqKnowledgeBase{TModel}"/> class.
+        /// </summary>
+        /// <param name="innerKnowledgeBase">The knowledge base instance to wrap.</param>
         public LinqKnowledgeBase(IKnowledgeBase innerKnowledgeBase) => this.innerKnowledgeBase = innerKnowledgeBase;
 
+        /// <inheritdoc />
         public void Tell(Expression<Predicate<TModel>> expression)
         {
             innerKnowledgeBase.Tell(SentenceFactory.Create(expression)); 
         }
 
+        /// <inheritdoc />
         public bool Ask(Expression<Predicate<TModel>> expression)
         {
             return innerKnowledgeBase.Ask(SentenceFactory.Create(expression));

@@ -16,7 +16,7 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             Sentence = new CNFConversion().ApplyTo(sentence);
             var clauses = new List<CNFClause>();
-            new ExpressionConstructor(clauses).ApplyTo(Sentence);
+            new SentenceConstructor(clauses).ApplyTo(Sentence);
             Clauses = clauses.AsReadOnly();
         }
 
@@ -33,11 +33,11 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <summary>
         /// Sentence "Transformation" that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.
         /// </summary>
-        private class ExpressionConstructor : SentenceTransformation
+        private class SentenceConstructor : SentenceTransformation
         {
             private readonly List<CNFClause> clauses;
 
-            public ExpressionConstructor(List<CNFClause> clauses) => this.clauses = clauses;
+            public SentenceConstructor(List<CNFClause> clauses) => this.clauses = clauses;
 
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)

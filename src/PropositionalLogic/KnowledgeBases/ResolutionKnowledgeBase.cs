@@ -20,8 +20,7 @@ namespace SCPropositionalLogic.KnowledgeBases
         /// <inheritdoc />
         public bool Ask(Sentence sentence)
         {
-            var negationOfQuery = new Negation(sentence);
-            var negationOfQueryAsCnf = new CNFSentence(negationOfQuery);
+            var negationOfQueryAsCnf = new CNFSentence(new Negation(sentence));
             var clauses = sentences.Append(negationOfQueryAsCnf).SelectMany(s => s.Clauses).ToHashSet();
             var queue = new Queue<(CNFClause, CNFClause)>();
 

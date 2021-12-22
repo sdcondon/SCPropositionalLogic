@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+﻿namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.

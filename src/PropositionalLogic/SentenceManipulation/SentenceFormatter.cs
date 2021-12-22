@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Linq;
 
 namespace SCPropositionalLogic.SentenceManipulation
 {
     /// <summary>
     /// Temporary..
-    /// Will do while I figure out what I need (formatprovider, ToString implementations in inidividual classes, ...?).
+    /// Will do while I figure out what I want/need (formatprovider, ToString implementations in inidividual classes, ...?).
     /// Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed), too.
     /// </summary>
     internal static class SentenceFormatter

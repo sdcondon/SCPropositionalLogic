@@ -19,7 +19,7 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             Sentence = sentence;
             var literals = new SortedSet<CNFLiteral>(new LiteralComparer());
-            new ClauseConstructor(this, literals).ApplyTo(sentence);
+            new ClauseConstructor(literals).ApplyTo(sentence);
             Literals = literals; // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
         }
 
@@ -55,7 +55,7 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         public Sentence Sentence { get; }
 
         /// <summary>
-        /// Gets the collection of literals that comprise this clause.
+        /// Gets the collection of literals that comprise this clause. Literals are ordered first in order of their hash codes (so the same literals - negated or not - will occur in the same order in different clauses), then in order of whether they are positive or not. 
         /// </summary>
         public IReadOnlyCollection<CNFLiteral> Literals { get; }
 
@@ -242,10 +242,9 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 
         private class ClauseConstructor : SentenceTransformation
         {
-            private readonly CNFClause owner;
             private readonly ISet<CNFLiteral> literals;
 
-            public ClauseConstructor(CNFClause owner, ISet<CNFLiteral> literals) => (this.owner, this.literals) = (owner, literals);
+            public ClauseConstructor(ISet<CNFLiteral> literals) => this.literals = literals;
 
             public override Sentence ApplyTo(Sentence sentence)
             {
@@ -259,7 +258,7 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
                     // We've hit a literal.
                     literals.Add(new CNFLiteral(sentence));
 
-                    // We don't need to look any further down the tree for the purposes of this class (though the PLLiteral ctor, above,
+                    // We don't need to look any further down the tree for the purposes of this class (though the CNFLiteral ctor, above,
                     // does so to figure out the details of the literal). So we can just return node rather than invoking base.Visit. 
                     return sentence;
                 }

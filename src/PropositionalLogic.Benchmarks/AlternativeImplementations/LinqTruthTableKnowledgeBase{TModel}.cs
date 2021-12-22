@@ -20,7 +20,7 @@ namespace SCPropositionalLogic.Benchmarks.Alternatives
         where TModel : class, new()
     {
         public static readonly List<Action<TModel, bool>> propertySetters;
-        public readonly List<Expression<Predicate<TModel>>> sentences = new List<Expression<Predicate<TModel>>>();
+        public readonly List<Predicate<TModel>> sentenceSatisfactionChecks = new List<Predicate<TModel>>();
 
         static LinqTruthTableKnowledgeBase()
         {
@@ -48,38 +48,19 @@ namespace SCPropositionalLogic.Benchmarks.Alternatives
         }
 
         /// <inheritdoc />
-        public void Tell(Expression<Predicate<TModel>> expression) => sentences.Add(expression);
+        public void Tell(Expression<Predicate<TModel>> expression) => sentenceSatisfactionChecks.Add(expression.Compile());
 
         /// <inheritdoc />
         public bool Ask(Expression<Predicate<TModel>> query)
         {
-            /*
-             * Pseudocode from 'Artificial Intelligence: A Modern Approach, 3rd Ed' section 7.4, figure 7.10:
-             * 
-            function TT-ENTAILS?(KB, α) returns true or false
-                inputs: 
-                  KB, the knowledge base, a sentence in propositional logic
-                  α, the query, a sentence in propositional logic  
-                symbols ← a list of the proposition symbols in KB and α
-                return TT-CHECK-ALL(KB,α, symbols, {})
-
-            function TT-CHECK-ALL(KB, α, symbols, model) returns true or false
-                if EMPTY?(symbols) then
-                    if PL-TRUE?(KB, model) then return PL-TRUE?(α, model)
-                    else return true// when KB is false, always return true
-                else do
-                    P ← FIRST(symbols)
-                    rest ← REST(symbols) 
-                    return (TT-CHECK-ALL(KB,α, rest, model ∪ {P = true})  and  TT-CHECK-ALL(KB,α, rest, model ∪ {P = false}))
-            */
+            var querySatisfactionCheck = query.Compile();
 
             bool CheckAll(TModel model, IEnumerable<Action<TModel, bool>> setters)
             {
                 var setter = setters.FirstOrDefault();
                 if (setter == null)
                 {
-                    // TODO-PERFORMANCE: Haven't verified, but presumably compilation result of lambda expression compilation is cached..
-                    return !sentences.All(r => r.Compile()(model)) || query.Compile()(model);
+                    return !sentenceSatisfactionChecks.All(check => check(model)) || querySatisfactionCheck(model);
                 }
 
                 var rest = setters.Skip(1); // TODO-PERFORMANCE: inefficient nested enums
