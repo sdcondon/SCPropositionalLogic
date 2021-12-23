@@ -6,8 +6,8 @@ using System.Linq;
 namespace SCPropositionalLogic.KnowledgeBases
 {
     /// <summary>
-    /// Knowledge base that satisfies queries by enumerating all possible models, returning true if and only if the query holds
-    /// true in all models in which all of the rules hold true. Obviously incredibly slow for non-trivial models.
+    /// Truth table knowledge base that just visits the sentence to check whether its satisfied for a particular model,
+    /// rather than compiling the check into IL.
     /// </summary>
     public class NonCompilingTruthTableKnowledgeBase : IKnowledgeBase
     {

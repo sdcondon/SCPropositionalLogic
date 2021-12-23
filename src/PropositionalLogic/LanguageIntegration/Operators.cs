@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Static methods for logical operators that don't exist in C#.
+    /// It is recommended to include a 'using static' for this class when using a <see cref="ILinqKnowledgeBase{TModel}"/>.
     /// </summary>
     public static class Operators
     {

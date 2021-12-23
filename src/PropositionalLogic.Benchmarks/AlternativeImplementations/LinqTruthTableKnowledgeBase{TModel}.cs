@@ -26,8 +26,6 @@ namespace SCPropositionalLogic.Benchmarks.Alternatives
         {
             // There are almost certainly a tonne of better (still type-safe) ways to do this, 
             // but this will suffice for getting started.
-            // One approach worthy of investigation is to use a source generator to generate this at compile time (or
-            // throw a compile error).
             // Ultimately don't want to force the type to have settable props. How does Moq work - perhaps use Reflection.Emit?
             // (Or do all analysis with Linq expression visitors rather than actual invocation - though the side
             // benefits of using LINQ start to dissipate then - and suspect it would be a fair bit slower)
@@ -53,6 +51,9 @@ namespace SCPropositionalLogic.Benchmarks.Alternatives
         /// <inheritdoc />
         public bool Ask(Expression<Predicate<TModel>> query)
         {
+            // One thing to note here is that for sentences in Tell, and the query here, all we do is immediately compile them.
+            // As such, this class would be quicker if we just accepted Predicate<TModel>. The only reason we don't is for this
+            // to be a more interesting performance comparison for the real implementation (because its closer to the implementation).
             var querySatisfactionCheck = query.Compile();
 
             bool CheckAll(TModel model, IEnumerable<Action<TModel, bool>> setters)

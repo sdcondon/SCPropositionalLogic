@@ -171,7 +171,7 @@ namespace SCPropositionalLogic.LanguageIntegration
 
             if (expression is MemberExpression memberExpr && memberExpr.Expression != null) // Non-static field or property access
             {
-                if (memberExpr.Expression.Type == typeof(TModel)) // todo: no guarantee that this is the model param of the original lambda... Make me robust! requires passing domain param down through the whole process..
+                if (memberExpr.Expression.Type == typeof(TModel)) // todo: no guarantee that this is the model param of the original lambda... Make me robust! requires passing domain param down through the whole process though..
                 {
                     // Boolean-valued property access on the model parameter is interpreted as a ground predicate
                     sentence = new MemberProposition(memberExpr.Member);

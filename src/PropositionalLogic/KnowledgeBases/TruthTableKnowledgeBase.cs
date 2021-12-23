@@ -32,8 +32,8 @@ namespace SCPropositionalLogic.KnowledgeBases
         /// <inheritdoc />
         public bool Ask(Sentence query)
         {
-            propositionFinder.ApplyTo(query); // always going to be false if we ask about an unknown proposition, but don't bother shortcutting..
-            var querySatisfactionCheck = MakeSatisfactionCheck(query);
+            propositionFinder.ApplyTo(query); // NB: answer will always be false if we ask about an unknown proposition (because we know nothing about the proposition), but don't bother shortcutting, for simplicity.
+            var querySatisfactionCheck = MakeSatisfactionCheck(query); // NB: For small models (and thus not many checks), the cost of compilation might actually not be worth it.. But we do..
 
             bool CheckAll(Dictionary<Proposition, bool> model, IEnumerable<Proposition> propositions)
             {
@@ -63,7 +63,7 @@ namespace SCPropositionalLogic.KnowledgeBases
         }
 
         /// <summary>
-        /// Converts a <see cref="Sentence"/> into a delegate that accepts the model (a dictionary of proposition values) and returns a value indicating if the provided sentence is satisfied by that model.
+        /// Converts a <see cref="Sentence"/> into a delegate that accepts the model (a dictionary of proposition values) and returns a value indicating if the sentence is satisfied by that model.
         /// </summary>
         /// <param name="sentence">The sentence.</param>
         /// <returns>A delegate.</returns>
@@ -96,14 +96,17 @@ namespace SCPropositionalLogic.KnowledgeBases
                         GetExpressionFor(equivalence.Left),
                         GetExpressionFor(equivalence.Right)),
 
-                    // NB: dictionary is guaranteed to contain this key when this is invoked, so there's no need to get clever:
+                    // NB: the dictionary is guaranteed to contain this key when this is invoked, so there's no need to get clever with error handling:
                     Proposition proposition => Expression.MakeIndex(
                         modelParameter,
                         typeof(Dictionary<Proposition, bool>).GetProperty("Item"),
                         new[] { Expression.Constant(proposition) }),
+
+                    _ => throw new ArgumentException($"Unsupported sentence type {sentence.GetType()}", nameof(sentence)),
                 };
             }
 
+            // NB: Compilation is expensive..
             return Expression.Lambda<Func<Dictionary<Proposition, bool>, bool>>(GetExpressionFor(sentence), modelParameter).Compile();
         }
 

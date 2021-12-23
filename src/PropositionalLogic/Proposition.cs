@@ -3,7 +3,7 @@
 namespace SCPropositionalLogic
 {
     /// <summary>
-    /// Representation of a proposition sentence of propositional logic, In typical PL syntax, this is written as:
+    /// Representation of a proposition sentence of propositional logic. In typical PL syntax, this is written as:
     /// <code>{proposition symbol}</code>
     /// </summary>
     public class Proposition : Sentence

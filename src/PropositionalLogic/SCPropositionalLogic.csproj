@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="SCPropositionalLogic.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="SauceControl.InheritDoc" Version="1.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
