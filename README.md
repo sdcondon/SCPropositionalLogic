@@ -11,7 +11,7 @@ For usage examples, see the tests.
 
 ## Language Integration
 
-No doubt there are countless propositional logic library out there for .NET. The only perhaps non-obvious part of this is the classes in the LanguageIntegration namespace, which allow for specifying PL sentences as LINQ expressions.
+No doubt there are countless propositional logic libraries out there for .NET. The only perhaps non-obvious part of this one is the classes in the LanguageIntegration namespace, which allow for specifying PL sentences as LINQ expressions.
 
 Benefits of using LINQ expressions:
 * Your sentences of propositional logic can be expressed as familiar, plain-old C#, using the operators you would probably expect - `&&`, `||` and `!` (NB not `&` and `|` yet..).
