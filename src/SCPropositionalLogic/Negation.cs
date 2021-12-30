@@ -20,7 +20,7 @@ namespace SCPropositionalLogic
         public Sentence Sentence { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is Negation negation && Sentence.Equals(negation.Sentence);
+        public override bool Equals(object obj) => obj is Negation otherNegation && Sentence.Equals(otherNegation.Sentence);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Sentence);

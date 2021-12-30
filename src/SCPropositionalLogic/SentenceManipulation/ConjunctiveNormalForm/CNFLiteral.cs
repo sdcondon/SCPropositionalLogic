@@ -16,15 +16,20 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <param name="lambda">The literal, represented as a sentence.</param>
         public CNFLiteral(Sentence sentence)
         {
-            Sentence = sentence;
-
             if (sentence is Negation negation)
             {
                 IsNegated = true;
                 sentence = negation.Sentence;
             }
 
-            Proposition = sentence as Proposition ?? throw new ArgumentException("Sentence must be a literal", nameof(sentence));
+            if (sentence is Proposition proposition)
+            {
+                Proposition = proposition;
+            }
+            else
+            {
+                throw new ArgumentException($"Provided sentence must be either a proposition or a negated proposition. {sentence} is neither.");
+            }
         }
 
         /// <summary>
@@ -36,21 +41,7 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             Proposition = proposition;
             IsNegated = isNegated;
-
-            if (isNegated)
-            {
-                Sentence = new Negation(proposition);
-            }
-            else
-            {
-                Sentence = proposition;
-            }
         }
-
-        /// <summary>
-        /// Gets the actual <see cref="Sentence"/> that underlies this representation.
-        /// </summary>
-        public Sentence Sentence { get; }
 
         /// <summary>
         /// Gets a value indicating whether this literal is a negation of the underlying atomic sentence.
@@ -74,12 +65,35 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         public CNFLiteral Negate() => new CNFLiteral(Proposition, !IsNegated);
 
         /// <inheritdoc />
-        public override string ToString() => Sentence.ToString();
+        public override string ToString() => $"{(IsNegated ? "¬" : "")}{Proposition}";
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is CNFLiteral literal && literal.Sentence.Equals(Sentence);
+        public override bool Equals(object obj)
+        {
+            return obj is CNFLiteral literal
+                && literal.Proposition.Equals(Proposition)
+                && literal.IsNegated.Equals(IsNegated);
+        }
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Sentence);
+        public override int GetHashCode() => HashCode.Combine(Proposition, IsNegated);
+
+        /// <summary>
+        /// Defines the (implicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>.
+        /// </summary>
+        /// <param name="sentence">The sentence to convert.</param>
+        /// <remarks>
+        /// NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
+        /// </remarks>
+        public static explicit operator CNFLiteral(Sentence sentence) => new CNFLiteral(sentence);
+
+        /// <summary>
+        /// Defines the (implicit) conversion of a <see cref="Proposition"/> instance to a <see cref="CNFLiteral"/>.
+        /// </summary>
+        /// <param name="sentence">The proposition to convert.</param>
+        /// <remarks>
+        /// NB: This conversion is implicit because it is always valid.
+        /// </remarks>
+        public static implicit operator CNFLiteral(Proposition proposition) => new CNFLiteral(proposition);
     }
 }

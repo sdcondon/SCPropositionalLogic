@@ -17,7 +17,6 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>.</param>
         public CNFClause(Sentence sentence)
         {
-            Sentence = sentence;
             var literals = new SortedSet<CNFLiteral>(new LiteralComparer());
             new ClauseConstructor(literals).ApplyTo(sentence);
             Literals = literals; // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
@@ -31,28 +30,12 @@ namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
             Literals = new SortedSet<CNFLiteral>(literals, literalComparer);
-
-            // NB: Back when lambdas were the internal representation, when there were no literals we used
-            // a literal False as the sentence - because it is an important maxim of resolution that an
-            // empty clause is unsatisfiable. Time will tell if simply using a null sentence here is acceptable.
-            var sentence = Literals.FirstOrDefault()?.Sentence;
-            foreach (var literal in Literals.Skip(1))
-            {
-                sentence = new Disjunction(sentence, literal.Sentence);
-            }
-
-            Sentence = sentence;
         }
 
         /// <summary>
         /// Returns an instance of the empty clause.
         /// </summary>
         public static CNFClause Empty { get; } = new CNFClause(Array.Empty<CNFLiteral>());
-
-        /// <summary>
-        /// Gets the actual <see cref="Sentence"/> that underlies this representation.
-        /// </summary>
-        public Sentence Sentence { get; }
 
         /// <summary>
         /// Gets the collection of literals that comprise this clause. Literals are ordered first in order of their hash codes (so the same literals - negated or not - will occur in the same order in different clauses), then in order of whether they are positive or not. 
