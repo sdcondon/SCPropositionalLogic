@@ -1,14 +1,11 @@
 ﻿using FluentAssertions;
 using FlUnit;
+using static SCPropositionalLogic.Sentence;
 
 namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     public class CNFClauseTests
     {
-        private static Proposition P => new Proposition("P");
-        private static Proposition Q => new Proposition("Q");
-        private static Proposition R => new Proposition("R");
-
         public static Test ResolutionOfResolvableClauses => TestThat
             .When(() =>
             {

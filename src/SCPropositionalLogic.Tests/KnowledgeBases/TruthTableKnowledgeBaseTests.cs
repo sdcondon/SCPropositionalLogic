@@ -6,10 +6,6 @@ namespace SCPropositionalLogic.KnowledgeBases
 {
     public class TruthTableKnowledgeBaseTests
     {
-        private static Proposition P { get; } = new Proposition("P");
-        private static Proposition Q { get; } = new Proposition("Q");
-        private static Proposition R { get; } = new Proposition("R");
-
         public static Test TrivialConclusions1 => TestThat
             .When(() =>
             {

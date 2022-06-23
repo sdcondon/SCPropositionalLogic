@@ -5,7 +5,8 @@ Very simple [propositional logic](https://en.wikipedia.org/wiki/Propositional_ca
 Created just for fun while reading _Artificial Intelligence: A Modern Approach_ (3rd Edition - [ISBN 978-1292153964](https://www.google.com/search?q=isbn+978-1292153964)) - so may prove interesting to the .NET-inclined reading the same book.
 The main goal here is for it to be a learning resource - as such, care has been taken to include decent XML documentation and explanatory inline comments where appropriate.
 For real-world scenarios, there are other better inference engines out there that use more powerful logics than propositional logic, which is all that's implemented here (and - thus far at least - only in the most basic of ways).
-This repo does serve as a precursor to [SCFirstOrderLogic](https://github.com/sdcondon/SCFirstOrderLogic) though, which should be more useful (though also very basic). 
+
+In truth, the main purpose this repo serves is as a stepping stone to [SCFirstOrderLogic](https://github.com/sdcondon/SCFirstOrderLogic). 
 
 For usage examples, see the tests.
 

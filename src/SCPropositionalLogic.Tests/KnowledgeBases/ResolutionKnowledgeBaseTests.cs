@@ -6,10 +6,6 @@ namespace SCPropositionalLogic.KnowledgeBases
 {
     public static class ResolutionKnowledgeBaseTests
     {
-        private static Proposition P { get; } = new Proposition("P");
-        private static Proposition Q { get; } = new Proposition("Q");
-        private static Proposition R { get; } = new Proposition("R");
-
         public static Test TrivialConclusions1 => TestThat
             .When(() =>
             {
@@ -19,7 +15,7 @@ namespace SCPropositionalLogic.KnowledgeBases
                 return kb;
             })
             .ThenReturns()
-            .And(kb => kb.Ask(Q).Should().BeTrue())
+            .And(kb => kb.Ask(Q).Should().BeTrue()) // Modus Ponens..
             .And(kb => kb.Ask(R).Should().BeFalse()) // Truthiness of R cannot be determined..
             .And(kb => kb.Ask(Not(R)).Should().BeFalse()); // Truthiness of R cannot be determined..
 
@@ -32,9 +28,9 @@ namespace SCPropositionalLogic.KnowledgeBases
                 return kb;
             })
             .ThenReturns()
-            .And(kb => kb.Ask(Not(P)).Should().BeTrue())
-            .And(kb => kb.Ask(R).Should().BeFalse())
-            .And(kb => kb.Ask(Not(R)).Should().BeFalse());
+            .And(kb => kb.Ask(Not(P)).Should().BeTrue()) // Contrapositive..
+            .And(kb => kb.Ask(R).Should().BeFalse()) // Truthiness of R cannot be determined..
+            .And(kb => kb.Ask(Not(R)).Should().BeFalse()); // Truthiness of R cannot be determined..
 
         public static Test NonTrivialConclusion1 => TestThat
             .When(() =>
