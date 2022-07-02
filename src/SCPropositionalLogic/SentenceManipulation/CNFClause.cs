@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation
 {
     /// <summary>
     /// Representation of an individual clause of a propositional logic sentence in conjunctive normal form - that is, a disjunction of literals (<see cref="CNFLiteral"/>s).

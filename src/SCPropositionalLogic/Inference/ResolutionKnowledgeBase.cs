@@ -1,8 +1,8 @@
-﻿using SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm;
+﻿using SCPropositionalLogic.SentenceManipulation;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCPropositionalLogic.KnowledgeBases
+namespace SCPropositionalLogic.Inference
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.

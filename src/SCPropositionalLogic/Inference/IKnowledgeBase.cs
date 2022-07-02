@@ -1,4 +1,4 @@
-﻿namespace SCPropositionalLogic.KnowledgeBases
+﻿namespace SCPropositionalLogic.Inference
 {
     /// <summary>
     /// A store of knowledge expressed as sentences of propositional logic.

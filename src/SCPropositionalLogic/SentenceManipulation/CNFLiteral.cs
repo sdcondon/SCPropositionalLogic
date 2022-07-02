@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation
 {
     /// <summary>
     /// Representation of a literal of propositional logic. That is, an atomic sentence or a negated atomic sentence.

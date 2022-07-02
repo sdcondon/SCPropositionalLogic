@@ -1,5 +1,5 @@
-﻿using SCPropositionalLogic.KnowledgeBases;
-using SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm;
+﻿using SCPropositionalLogic.Inference;
+using SCPropositionalLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +37,7 @@ namespace SCPropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
                 clauses ← clauses ∪new 
          */
 
-        private readonly List<CNFSentence> sentences = new List<CNFSentence>();
+        private readonly List<CNFSentence> sentences = new ();
 
         /// <summary>
         /// Tells the knowledge base that a given expression evaluates as true for all models that it will be asked about.
@@ -58,7 +58,7 @@ namespace SCPropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
             var negationOfQuery = new Negation(query);
             var negationOfQueryAsCnf = new CNFSentence(negationOfQuery);
             var clauses = sentences.Append(negationOfQueryAsCnf).SelectMany(s => s.Clauses).ToHashSet();
-            HashSet<CNFClause> newClauses = new HashSet<CNFClause>();
+            var newClauses = new HashSet<CNFClause>();
 
             while (true)
             {

@@ -1,4 +1,4 @@
-﻿using SCPropositionalLogic.KnowledgeBases;
+﻿using SCPropositionalLogic.Inference;
 using System;
 using System.Linq.Expressions;
 

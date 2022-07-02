@@ -1,4 +1,4 @@
-﻿namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+﻿namespace SCPropositionalLogic.SentenceManipulation
 {
     /// <summary>
     /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.

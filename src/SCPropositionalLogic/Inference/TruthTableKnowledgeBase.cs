@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace SCPropositionalLogic.KnowledgeBases
+namespace SCPropositionalLogic.Inference
 {
     /// <summary>
     /// Knowledge base that satisfies queries by enumerating all possible models, returning true if and only if the query holds
