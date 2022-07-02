@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using SCPropositionalLogic.Benchmarks.Alternatives;
-using SCPropositionalLogic.KnowledgeBases;
+using SCPropositionalLogic.Inference;
 using SCPropositionalLogic.LanguageIntegration;
 using System.Reflection;
 using static SCPropositionalLogic.LanguageIntegration.Operators;

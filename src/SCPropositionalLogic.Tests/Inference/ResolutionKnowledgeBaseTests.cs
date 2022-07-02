@@ -2,7 +2,7 @@
 using FluentAssertions;
 using static SCPropositionalLogic.Sentence;
 
-namespace SCPropositionalLogic.KnowledgeBases
+namespace SCPropositionalLogic.Inference
 {
     public static class ResolutionKnowledgeBaseTests
     {

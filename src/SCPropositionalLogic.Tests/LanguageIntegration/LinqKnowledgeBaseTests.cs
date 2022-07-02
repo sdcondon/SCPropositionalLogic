@@ -1,7 +1,7 @@
 ﻿using FlUnit;
 using FluentAssertions;
 using static SCPropositionalLogic.LanguageIntegration.Operators;
-using SCPropositionalLogic.KnowledgeBases;
+using SCPropositionalLogic.Inference;
 
 namespace SCPropositionalLogic.LanguageIntegration
 {

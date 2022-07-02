@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCPropositionalLogic.KnowledgeBases
+namespace SCPropositionalLogic.Inference
 {
     /// <summary>
     /// Truth table knowledge base that just visits the sentence to check whether its satisfied for a particular model,
@@ -13,7 +13,7 @@ namespace SCPropositionalLogic.KnowledgeBases
     {
         private readonly HashSet<Proposition> propositions;
         private readonly PropositionFinder propositionFinder;
-        private readonly List<Sentence> sentences = new List<Sentence>();
+        private readonly List<Sentence> sentences = new ();
 
         public NonCompilingTruthTableKnowledgeBase()
         {
