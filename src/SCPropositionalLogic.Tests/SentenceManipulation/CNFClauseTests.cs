@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCPropositionalLogic.Sentence;
+using static SCPropositionalLogic.SentenceCreation.SentenceFactory;
 
-namespace SCPropositionalLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCPropositionalLogic.SentenceManipulation
 {
     public class CNFClauseTests
     {

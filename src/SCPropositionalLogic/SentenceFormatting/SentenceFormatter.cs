@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SCPropositionalLogic.SentenceManipulation
+namespace SCPropositionalLogic.SentenceFormatting
 {
     /// <summary>
     /// Temporary..
@@ -21,19 +21,19 @@ namespace SCPropositionalLogic.SentenceManipulation
         };
 
         private static string Print(Conjunction conjunction) =>
-            $"({Print(conjunction.Left)} ∧ {Print(conjunction.Right)})";
+            $"({conjunction.Left.Print()} ∧ {conjunction.Right.Print()})";
 
         public static string Print(Disjunction disjunction) =>
-            $"({Print(disjunction.Left)} ∨ {Print(disjunction.Right)})";
+            $"({disjunction.Left.Print()} ∨ {disjunction.Right.Print()})";
 
         public static string Print(Equivalence equivalence) =>
-            $"({Print(equivalence.Left)} ⇔ {Print(equivalence.Right)})";
+            $"({equivalence.Left.Print()} ⇔ {equivalence.Right.Print()})";
 
         public static string Print(Implication implication) =>
-            $"({Print(implication.Antecedent)} ⇒ {Print(implication.Consequent)})";
+            $"({implication.Antecedent.Print()} ⇒ {implication.Consequent.Print()})";
 
         public static string Print(Negation negation) =>
-            $"¬{Print(negation.Sentence)}";
+            $"¬{negation.Sentence.Print()}";
 
         public static string Print(Proposition proposition) =>
             $"{proposition.Symbol}";

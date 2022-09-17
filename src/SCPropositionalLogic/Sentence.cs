@@ -1,11 +1,11 @@
-﻿using SCPropositionalLogic.SentenceManipulation;
+﻿using SCPropositionalLogic.SentenceFormatting;
 
 namespace SCPropositionalLogic
 {
     /// <summary>
     /// Representation of a sentence of propositional logic.
     /// </summary>
-    public abstract partial class Sentence
+    public abstract class Sentence
     {
         // TODO.. proper visitor pattern probably useful for transformations and others..
         ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);

@@ -1,6 +1,6 @@
 ﻿using FlUnit;
 using FluentAssertions;
-using static SCPropositionalLogic.Sentence;
+using static SCPropositionalLogic.SentenceCreation.SentenceFactory;
 
 namespace SCPropositionalLogic.Inference
 {

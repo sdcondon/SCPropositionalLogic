@@ -1,9 +1,9 @@
-﻿namespace SCPropositionalLogic
+﻿namespace SCPropositionalLogic.SentenceCreation
 {
     /// <summary>
     /// Representation of a sentence of propositional logic.
     /// </summary>
-    public abstract partial class Sentence
+    public static class SentenceFactory
     {
         /// <summary>
         /// Shorthand factory method for a (tree of) new <see cref="Conjunction"/>(s) of two (or more) operands.
