@@ -26,25 +26,9 @@ namespace SCPropositionalLogic
         public Sentence Right { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (!(obj is Conjunction otherConjunction))
-            {
-                return false;
-            }
-
-            (var low, var high) = Left.GetHashCode() < Right.GetHashCode() ? (Left, Right) : (Right, Left);
-            (var otherLow, var otherHigh) = otherConjunction.Left.GetHashCode() < otherConjunction.Right.GetHashCode() ? (otherConjunction.Left, otherConjunction.Right) : (otherConjunction.Right, otherConjunction.Left);
-            
-            return low.Equals(otherLow) && high.Equals(otherHigh);
-        }
+        public override bool Equals(object obj) => obj is Conjunction otherConjunction && Left.Equals(otherConjunction.Left) && Right.Equals(otherConjunction.Right);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            (var lowSentence, var highSentence) = Left.GetHashCode() < Right.GetHashCode() ? (Left, Right) : (Right, Left);
-
-            return HashCode.Combine(lowSentence, highSentence);
-        }
+        public override int GetHashCode() => HashCode.Combine(Left, Right);
     }
 }
