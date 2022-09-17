@@ -1,10 +1,9 @@
-﻿using SCPropositionalLogic.Inference;
-using SCPropositionalLogic.SentenceManipulation;
+﻿using SCPropositionalLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCPropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
+namespace SCPropositionalLogic.Inference
 {
     /// <summary>
     /// Knowledge base that uses resolution to answer queries.
@@ -14,7 +13,7 @@ namespace SCPropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
     /// The "purest" form of the algorithm according to the source material in question - but that
     /// makes it rather inefficient. Not really useable in a real scenario.
     /// </remarks>
-    public class ResolutionKnowledgeBase : IKnowledgeBase
+    public class ResolutionKnowledgeBase_FromAIaMA : IKnowledgeBase
     {
         /*
          * Figure 7.12 A simple resolution algorithm for propositional logic. The function PL-RESOLVE returns the set of all possible clauses obtained by resolving its two inputs. 
@@ -37,7 +36,7 @@ namespace SCPropositionalLogic.Benchmarks.Alternatives.FromAiAModernApproach
                 clauses ← clauses ∪new 
          */
 
-        private readonly List<CNFSentence> sentences = new ();
+        private readonly List<CNFSentence> sentences = new List<CNFSentence>();
 
         /// <summary>
         /// Tells the knowledge base that a given expression evaluates as true for all models that it will be asked about.

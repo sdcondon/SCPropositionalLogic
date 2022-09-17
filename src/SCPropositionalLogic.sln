@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LinqToKBIcon.png = LinqToKBIcon.png
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCPropositionalLogic.Alternatives", "SCPropositionalLogic.Alternatives\SCPropositionalLogic.Alternatives.csproj", "{F8A6A46A-F88F-477C-BE27-8D2177B10ACE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8A6A46A-F88F-477C-BE27-8D2177B10ACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8A6A46A-F88F-477C-BE27-8D2177B10ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8A6A46A-F88F-477C-BE27-8D2177B10ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8A6A46A-F88F-477C-BE27-8D2177B10ACE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

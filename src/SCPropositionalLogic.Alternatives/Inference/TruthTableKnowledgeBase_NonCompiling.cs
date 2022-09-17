@@ -9,13 +9,13 @@ namespace SCPropositionalLogic.Inference
     /// Truth table knowledge base that just visits the sentence to check whether its satisfied for a particular model,
     /// rather than compiling the check into IL.
     /// </summary>
-    public class NonCompilingTruthTableKnowledgeBase : IKnowledgeBase
+    public class TruthTableKnowledgeBase_NonCompiling : IKnowledgeBase
     {
         private readonly HashSet<Proposition> propositions;
         private readonly PropositionFinder propositionFinder;
-        private readonly List<Sentence> sentences = new ();
+        private readonly List<Sentence> sentences = new List<Sentence>();
 
-        public NonCompilingTruthTableKnowledgeBase()
+        public TruthTableKnowledgeBase_NonCompiling()
         {
             propositions = new HashSet<Proposition>();
             propositionFinder = new PropositionFinder(propositions);
